@@ -23,10 +23,10 @@ namespace CConstsProject.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasMany(u => u.Outgoes).WithOne(o => o.User);
-            modelBuilder.Entity<User>().HasMany(u => u.Incomes).WithOne(i => i.User);
-            modelBuilder.Entity<User>().HasOne(u => u.Family).WithMany(f => f.Users);
-            modelBuilder.Entity<Item>().HasMany(i => i.Outgos).WithOne(o => o.Item);
+            modelBuilder.Entity<Outgo>().HasOne(o => o.User).WithMany(u => u.Outgoes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Income>().HasOne(i => i.User).WithMany(u => u.Incomes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasOne(u => u.Family).WithMany(f => f.Users).HasForeignKey(u=>u.FamilyId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Outgo>().HasOne(o => o.Item).WithMany(i => i.Outgos).HasForeignKey(o=>o.ItemId).OnDelete(DeleteBehavior.Cascade);
             
         }
     }

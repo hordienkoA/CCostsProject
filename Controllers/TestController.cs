@@ -12,10 +12,12 @@ namespace CCostsProject.Controllers
     public class TestController:Controller
     {
         DbWorker worker;
+        ApplicationContext db;
         
-        public TestController()
+        public TestController(ApplicationContext context)
         {
-
+            db = context;
+            worker = new DbWorker(db);
         }
         [Authorize]
         [HttpGet]
@@ -23,10 +25,11 @@ namespace CCostsProject.Controllers
         {
             return Ok($"Your login is : {User.Identity.Name}");
         }
-        [HttpGet("ClearDb")]
-        public IActionResult Get()
+        [HttpDelete("ClearDb")]
+        public IActionResult Delete()
         {
-            
+            worker.ClearDb();
+            return Ok();
         }
     }
 }

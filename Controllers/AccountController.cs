@@ -16,17 +16,19 @@ using System.IdentityModel.Tokens.Jwt;
 using CCostsProject;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CConstsProject.Controllers
 {
-   
+   [Route("api/[controller]")]
     public class AccountController:Controller
     {
         ApplicationContext db;
-
+        DbWorker Worker;
         public AccountController(ApplicationContext context)
         {
             this.db = context;
+            Worker = new DbWorker(db);  
             if (!db.Users.Any())
             {
                 List<User> users = new List<User>
@@ -58,10 +60,11 @@ namespace CConstsProject.Controllers
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
-                notBefore: now,
-                claims: identity.Claims,
-                expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),SecurityAlgorithms.HmacSha256));
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             var response = new
             {
@@ -87,6 +90,22 @@ namespace CConstsProject.Controllers
                 return claimsIdentity;
             }
             return null;
+        }
+        [HttpGet("GetUsers")]
+        public IActionResult Get()
+        {
+            return new JsonResult(db.Users.ToList());
+        }
+
+        [HttpPost("AddUser")]
+        public IActionResult Post([FromBody]User user)
+        {
+            if (user != null)
+            {
+                Worker.AddUser(user);
+                return Ok();
+            }
+            return Forbid();
         }
     }
 }

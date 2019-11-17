@@ -9,9 +9,10 @@ namespace CCostsProject
 {
     public class AuthOptions
     {
-        public const string ISSUER = "CCAuthServer";
-        const string KEY = "mysuoersecret_secretkey!123";
-        public const int LIFETIME = 10;
+        public const string ISSUER = "CCTeam"; // издатель токена
+        public const string AUDIENCE = "CCUsers"; // потребитель токена
+        const string KEY = "mysupersecret_secretkey!1488";   // ключ для шифрации
+        public const int LIFETIME = 10; // время жизни токена - 1 минута
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));

@@ -16,12 +16,15 @@ namespace CConstsProject.Models
              listOfEntities = new List<string> { "Families", "Incomes", "Items", "Outgos", "TaskManagers", "Tasks", "Users" };
 
         }
-        public void AddOutgo(double Money,DateTime Date,Item Item,User User)
+        public void AddOutgo(Outgo outgo)
         {
-            Outgo outgo = new Outgo() { Money = Money, Date = Date, Item = Item, User = User };
-            outgo.Item.Outgos.Add(outgo);
-            db.Outgos.Add(outgo);
-            db.SaveChanges();
+            if (outgo != null)
+            {
+                //outgo.Item.Outgos.Add(outgo);
+                outgo.Item = db.Items.FirstOrDefault(i=>i.Id==outgo.ItemId);
+                db.Outgos.Add(outgo);
+                db.SaveChanges();
+            }
         }
         public void DeleteOutgo(int id)
         {
@@ -114,7 +117,7 @@ namespace CConstsProject.Models
         }
         public List<Income> GetIncomes()
         {
-            return db.Incomes.ToList();
+            return db.Incomes.Include(u=>u.User).ToList();
         }
 
         public void AddTask(Task task)
@@ -140,8 +143,15 @@ namespace CConstsProject.Models
         {
             foreach(var tableName in listOfEntities)
             {
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [" + tableName + "]");
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+                
             }
+        }
+        public void AddUser(User user)
+        {
+            db.Users.Add(user);
+            db.SaveChanges();
         }
         
     }
