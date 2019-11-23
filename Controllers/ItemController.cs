@@ -65,7 +65,7 @@ namespace CCostsProject.Controllers
         }
 
         [Authorize]
-        [HttpPost("DelItem")]
+        [HttpDelete("DelItem")]
         public IActionResult DelItem(int id)
         {
             Item item = db.Items.FirstOrDefault(i => i.Id == id);
