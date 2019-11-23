@@ -28,6 +28,7 @@ namespace CCostsProject.Controllers
             {
                 income.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 Worker.AddIncome(income);
+                Worker.MakeIncome(User.Identity.Name, income.Money);
                 return Ok(income);
             }
             return Forbid();
@@ -38,8 +39,8 @@ namespace CCostsProject.Controllers
         {
 
             Income income = db.Incomes.FirstOrDefault(i => i.Id == id);
-            
-            if (income != null&&income.User.UserName==User.Identity.Name)
+
+            if (income != null && income.User.UserName == User.Identity.Name)
             {
                 Worker.DeleteIncom(id);
                 return Ok();
@@ -47,21 +48,32 @@ namespace CCostsProject.Controllers
             return Forbid();
         }
         [HttpPost("EditIncome")]
-        public IActionResult Post(int id, string WorkType,DateTime Date)
+        public IActionResult Post(int id, string WorkType, DateTime Date)
         {
             Income income = db.Incomes.FirstOrDefault(i => i.Id == id);
-            if (income != null&&income.User.UserName == User.Identity.Name)
+            if (income != null && income.User.UserName == User.Identity.Name)
             {
-                Worker.EditIncome(id, WorkType,Date);
+                Worker.EditIncome(id, WorkType, Date);
                 return Ok(income);
             }
             return Forbid();
         }
         [Authorize]
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            Income income = Worker.GetIncome(id);
+            if (income != null)
+            {
+                return Json(income);
+            }
+            return NotFound();
+        }
+        [Authorize]
         [HttpGet("GetIncomes")]
         public IActionResult Get()
         {
-            return new JsonResult(Worker.GetIncomes().Where(u=>u.User.UserName==User.Identity.Name));
+            return new JsonResult(Worker.GetIncomes().Where(u=>(u.User.UserName==User.Identity.Name||u.User.Family==Worker.GetFamilyByUserName(User.Identity.Name))));
         }
     }
 

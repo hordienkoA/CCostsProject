@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CCostsProject.Controllers
 {
     //[Authorize]
-    [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     public class ItemController : Controller
     {
@@ -32,10 +32,9 @@ namespace CCostsProject.Controllers
         /// <param name="item"></param>
         /// <returns></returns>
         
+        [Authorize]
         [HttpPost("AddItem")]
-
         [Produces("application/json")]
-        
         public IActionResult Post([FromBody]Item item)
         {
             if (item == null)
@@ -45,11 +44,15 @@ namespace CCostsProject.Controllers
             worker.AddItem(item.AvarageCost, item.Type);
             return Ok(item); 
         }
+
+        [Authorize]
         [HttpGet("GetItems")]
         public IActionResult Get()
         {
             return Json(worker.GetItems());
         }
+
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -60,6 +63,8 @@ namespace CCostsProject.Controllers
             }
             return Json(item);
         }
+
+        [Authorize]
         [HttpPost("DelItem")]
         public IActionResult DelItem(int id)
         {

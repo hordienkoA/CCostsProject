@@ -16,6 +16,28 @@ namespace CConstsProject.Models
              listOfEntities = new List<string> { "Families", "Incomes", "Items", "Outgos", "TaskManagers", "Tasks", "Users" };
 
         }
+        public double? MakeIncome(string  username,double money)
+        {
+            User user = db.Users.FirstOrDefault(u => u.UserName == username);
+            if (user != null)
+            {
+                user.CashSum += money;
+                db.SaveChanges();
+                return user.CashSum;
+            }
+            return null;
+        }
+        public double? MakeOutgo(string username, double money)
+        {
+            User user = db.Users.FirstOrDefault(u => u.UserName == username);
+            if (user != null)
+            {
+                user.CashSum -= money;
+                db.SaveChanges();
+                return user.CashSum;
+            }
+            return null;
+        }
         public void AddOutgo(Outgo outgo)
         {
             if (outgo != null)
@@ -152,6 +174,30 @@ namespace CConstsProject.Models
         {
             db.Users.Add(user);
             db.SaveChanges();
+        }
+        public User GetUser(int id)
+        {
+            return db.Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public Outgo GetOutgo(int id)
+        {
+            return db.Outgos.FirstOrDefault(o => o.Id == id);
+        }
+
+        public Income GetIncome(int id)
+        {
+            return db.Incomes.FirstOrDefault(i => i.Id == id);
+        }
+
+        public Family GetFamily(int id)
+        {
+            return db.Families.FirstOrDefault(f => f.Id == id);
+        }
+        public Family GetFamilyByUserName(string username)
+        {
+            User user = db.Users.FirstOrDefault(u => u.UserName == username);
+            return db.Families.Include(f => f.Users).FirstOrDefault(f => f.Users.Contains(user));
         }
         
     }

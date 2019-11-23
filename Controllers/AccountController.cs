@@ -20,15 +20,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CConstsProject.Controllers
 {
-   [Route("api/[controller]")]
-    public class AccountController:Controller
+    [Route("api/[controller]")]
+    public class AccountController : Controller
     {
         ApplicationContext db;
         DbWorker Worker;
         public AccountController(ApplicationContext context)
         {
             this.db = context;
-            Worker = new DbWorker(db);  
+            Worker = new DbWorker(db);
             if (!db.Users.Any())
             {
                 List<User> users = new List<User>
@@ -38,14 +38,14 @@ namespace CConstsProject.Controllers
                 db.Users.AddRange(users);
                 db.SaveChanges();
             }
-            
+
         }
         /// <summary>
         /// Authentication by JWT
         /// </summary>
-        
+
         /// <returns></returns>
-        [HttpPost("/token")]
+        [HttpPost("/login")]
         public async System.Threading.Tasks.Task Token()
         {
             var username = Request.Form["username"];
@@ -106,6 +106,25 @@ namespace CConstsProject.Controllers
                 return Ok();
             }
             return Forbid();
+        }
+        [Authorize]
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            if (User.Identity.Name == "Admin")
+            {
+                User user = Worker.GetUser(id);
+                if (user != null)
+                {
+                    return Json(user);
+
+                }
+
+
+                return NotFound();
+
+            }
+            return Forbid("Permision denied");
         }
     }
 }
