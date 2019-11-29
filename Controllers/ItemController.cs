@@ -20,18 +20,10 @@ namespace CCostsProject.Controllers
             db = context;
             worker = new DbWorker(db);
         }
-        /// <summary>
-        /// This method adds item
-        /// </summary>
-        /// <remarks>
-        /// POST /AddItem{
-        /// "AvarageCost":1488,
-        /// "Type":"test"
-        /// }
-        /// </remarks>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        
+
+        ///<response code="200">Returns an item that was aded </response>
+        ///<response code="403">if request data was incorrect</response>
+
         [Authorize]
         [HttpPost("AddItem")]
         [Produces("application/json")]
@@ -39,7 +31,7 @@ namespace CCostsProject.Controllers
         {
             if (item == null)
             {
-                return BadRequest();
+                return Forbid();
             }
             worker.AddItem(item.AvarageCost, item.Type);
             return Ok(item); 
@@ -52,9 +44,11 @@ namespace CCostsProject.Controllers
             return Json(worker.GetItems());
         }
 
+        ///<response code="200">Returns item</response>
+        ///<response code="404"> if item with that id not found</response>
         [Authorize]
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        [HttpGet("GetItem")]
+        public IActionResult Get([FromBody]int id)
         {
             Item item = db.Items.FirstOrDefault(i => i.Id == id);
             if (item==null)
@@ -64,8 +58,10 @@ namespace CCostsProject.Controllers
             return Json(item);
         }
 
+        ///<response code="200"></response>
+        ///<response code="403"> if item with that id not found</response>
         [Authorize]
-        [HttpDelete("DelItem")]
+        [HttpDelete("DeleteItem")]
         public IActionResult DelItem(int id)
         {
             Item item = db.Items.FirstOrDefault(i => i.Id == id);
@@ -76,13 +72,16 @@ namespace CCostsProject.Controllers
             worker.DeleteItem(id);
             return Ok();
         }
+
+        ///<response code="200">Returns new item</response>
+        ///<response code="403"> if item  not found</response>
         [HttpPost("EditItem")]
         public IActionResult EditItem([FromBody]Item item)
         {
             if (item != null)
             {
                 worker.EditItem(item.Id, item.AvarageCost, item.Type);
-                return Ok();
+                return Ok(item);
 
             }
             return Forbid();

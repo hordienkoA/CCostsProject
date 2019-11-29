@@ -20,6 +20,9 @@ namespace CCostsProject.Controllers
             db = context;
             Worker = new DbWorker(db);
         }
+
+        ///<response code="200">Returns an outgo that was aded </response>
+        ///<response code="403">if request data was incorrect</response>
         [Authorize]
         [HttpPost("AddOutgo")]
         public  IActionResult Post([FromBody]Outgo outgo)
@@ -33,6 +36,9 @@ namespace CCostsProject.Controllers
             }
             return Forbid();
         }
+
+        ///<response code="200">Returns an outgo that was edited </response>
+        ///<response code="403">if outho with that id not found</response>
         [Authorize]
         [HttpPost("EditOutgo")]
         public IActionResult Post(int id,double Money,DateTime Date)
@@ -47,8 +53,11 @@ namespace CCostsProject.Controllers
             }
             return Forbid();
         }
+
+        ///<response code="200"> </response>
+        ///<response code="403">if outho with that id not found</response>
         [Authorize]
-        [HttpDelete("DelelteOutgo")]
+        [HttpDelete("DeleteOutgo")]
         public IActionResult Delete(int id)
         {
             Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == id);
@@ -60,9 +69,12 @@ namespace CCostsProject.Controllers
             }
             return Forbid();
         }
+
+        ///<response code="200">Returns outho</response>
+        ///<response code="404"> if outgo with that id not found</response>
         [Authorize]
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        [HttpGet("GetOutgo")]
+        public IActionResult Get([FromBody] int id)
         {
             Outgo outgo = Worker.GetOutgo(id);
             if (outgo != null)
@@ -71,6 +83,8 @@ namespace CCostsProject.Controllers
             }
             return NotFound();
         }
+
+
         [Authorize]
         [HttpGet("GetOutgoes")]
         public IActionResult GetOutgoes()

@@ -17,6 +17,7 @@ using CCostsProject;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CCostsProject.Models;
 
 namespace CConstsProject.Controllers
 {
@@ -44,7 +45,10 @@ namespace CConstsProject.Controllers
         /// Authentication by JWT
         /// </summary>
 
-        /// <returns></returns>
+        
+        ///<response code="200">Returns an autherization token </response>
+        ///<response code="400">Returns Invalid username or password</response>
+
         [HttpPost("/login")]
         public async System.Threading.Tasks.Task Token()
         {
@@ -75,6 +79,51 @@ namespace CConstsProject.Controllers
             await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
 
         }
+        /// <summary>
+        /// Authentication by JWT
+        /// </summary>
+        ///<remarks>
+        ///Sample request:
+        ///
+        ///Post /jsonLogin 
+        ///{
+        ///"username":"Admin",
+        ///"password":"Admin"
+        ///}
+        /// </remarks>
+        ///<response code="200">Returns an autherization token </response>
+        ///<response code="400">Returns Invalid username or password</response>
+        [Produces("application/json")]
+        [HttpPost("/jsonLogin")]
+        public async System.Threading.Tasks.Task Tocken([FromBody] LoginViewModel value)
+        {
+
+            
+            var identity = GetIdentity(value.username, value.password);
+            if (identity == null)
+            {
+                Response.StatusCode = 400;
+                await Response.WriteAsync("Invalid username or password");
+                return;
+            }
+            var now = DateTime.UtcNow;
+            var jwt = new JwtSecurityToken(
+                issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var response = new
+            {
+                access_token = encodedJwt,
+                username = identity.Name
+            };
+            Response.ContentType = "application/json";
+            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+        }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         private ClaimsIdentity GetIdentity(StringValues username, StringValues password)
         {
@@ -91,6 +140,7 @@ namespace CConstsProject.Controllers
             }
             return null;
         }
+        
         [HttpGet("GetUsers")]
         public IActionResult Get()
         {
@@ -107,7 +157,13 @@ namespace CConstsProject.Controllers
             }
             return Forbid();
         }
+
+      
+        ///<response code="200">Returns the user </response>
+        ///<response code="403">if auth username!=Admin</response>
+        ///<response code="404">if user with those id not found </response>
         [Authorize]
+        
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {

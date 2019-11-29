@@ -20,6 +20,8 @@ namespace CCostsProject.Controllers
             Worker = new DbWorker(db);
         }
 
+        ///<response code="200">Returns an income that was aded </response>
+        ///<response code="403">if request data was incorrect</response>
         [Authorize]
         [HttpPost("AddIncome")]
         public IActionResult Post([FromBody] Income income)
@@ -33,6 +35,8 @@ namespace CCostsProject.Controllers
             }
             return Forbid();
         }
+        ///<response code="200"></response>
+        ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         [Authorize]
         [HttpDelete("DeleteIncome")]
         public IActionResult Delete(int id)
@@ -47,6 +51,9 @@ namespace CCostsProject.Controllers
             }
             return Forbid();
         }
+
+        ///<response code="200">Returns income that was edited</response>
+        ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         [HttpPost("EditIncome")]
         public IActionResult Post(int id, string WorkType, DateTime Date)
         {
@@ -58,9 +65,12 @@ namespace CCostsProject.Controllers
             }
             return Forbid();
         }
+
+        ///<response code="200">Returns income</response>
+        ///<response code="404"> if income with that id not found</response>
         [Authorize]
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        [HttpGet("GetIncome")]
+        public IActionResult Get([FromBody]int id)
         {
             Income income = Worker.GetIncome(id);
             if (income != null)
@@ -70,6 +80,7 @@ namespace CCostsProject.Controllers
             return NotFound();
         }
         [Authorize]
+
         [HttpGet("GetIncomes")]
         public IActionResult Get()
         {
