@@ -21,6 +21,8 @@ namespace CConstsProject.Models
         {
             Database.EnsureCreated();
         }
+
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Outgo>().HasOne(o => o.User).WithMany(u => u.Outgoes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);

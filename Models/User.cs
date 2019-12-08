@@ -13,10 +13,20 @@ namespace CConstsProject.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [MinLength(3)]
+        [MaxLength(64)]
         public string UserName { get; set; }
         [Required]
+        
+        public string Email { get; set; }
+        [Required]
+        [MinLength(8)]
+        [MaxLength(255)]
+        
         public string Password { get; set; }
         [Required]
+        [MinLength(1)]
+        [MaxLength(255)]
         public String FullName { get; set; }
         [JsonIgnore]
         public string Position { get; set; } 

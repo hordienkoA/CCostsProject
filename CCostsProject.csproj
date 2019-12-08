@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.10" />
+    <PackageReference Include="RestSharp" Version="106.6.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0-rc1" />
   </ItemGroup>

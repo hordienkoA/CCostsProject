@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CConstsProject.Migrations
+namespace CCostsProject.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20191123132207_Update1")]
-    partial class Update1
+    [Migration("20191208173114_Initial-Create")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,7 +46,8 @@ namespace CConstsProject.Migrations
 
                     b.Property<int?>("UserId");
 
-                    b.Property<string>("WorkType");
+                    b.Property<string>("WorkType")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -63,7 +64,8 @@ namespace CConstsProject.Migrations
 
                     b.Property<double>("AvarageCost");
 
-                    b.Property<string>("Type");
+                    b.Property<string>("Type")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -137,15 +139,21 @@ namespace CConstsProject.Migrations
 
                     b.Property<double>("CashSum");
 
+                    b.Property<string>("Email")
+                        .IsRequired();
+
                     b.Property<int?>("FamilyId");
 
-                    b.Property<string>("FullName");
+                    b.Property<string>("FullName")
+                        .IsRequired();
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .IsRequired();
 
                     b.Property<string>("Position");
 
-                    b.Property<string>("UserName");
+                    b.Property<string>("UserName")
+                        .IsRequired();
 
                     b.Property<string>("WelcomeString");
 

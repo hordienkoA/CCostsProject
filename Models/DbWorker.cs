@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CCostsProject.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CConstsProject.Models
@@ -10,11 +12,12 @@ namespace CConstsProject.Models
     {
         ApplicationContext db;
         List<String> listOfEntities;
+        Regex emailValidator;
         public DbWorker(ApplicationContext context)
         {
             db = context;
              listOfEntities = new List<string> { "Families", "Incomes", "Items", "Outgos", "TaskManagers", "Tasks", "Users" };
-
+          emailValidator = new Regex(@"[A - Za - z0 - 9._ % +-] +@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}");
         }
         public double? MakeIncome(string  username,double money)
         {
@@ -170,10 +173,19 @@ namespace CConstsProject.Models
                 
             }
         }
-        public void AddUser(User user)
+        public bool AddUser(User user)
         {
+            if (db.Users.Any(u => u.Email == user.Email || u.UserName == user.UserName))
+            {
+                return false;
+            }
+            else if (ValidateUser(user))
+            {
+                return false;
+            }
             db.Users.Add(user);
             db.SaveChanges();
+            return true;
         }
         public User GetUser(int? id)
         {
@@ -215,6 +227,39 @@ namespace CConstsProject.Models
         {
             User user = db.Users.FirstOrDefault(u => u.UserName == username);
             return db.Families.Include(f => f.Users).FirstOrDefault(f => f.Users.Contains(user));
+        }
+
+        public bool ValidateUser(User user)
+        {
+
+            return user.Email.Length < 3 || user.Email.Length > 64 ||user.Password.Length<8
+                ||user.Password.Length>255||user.UserName.Length<3||user.UserName.Length>64||user.FullName.Length<1||user.FullName.Length>255;
+        }
+
+        public List<Income> GetIncomesByDateRange(DateTime fromDate,DateTime? toDate)
+        {
+            return toDate == null ? db.Incomes.Include(i => i.User).Where(i => i.Date > fromDate && i.Date < DateTime.Now).ToList<Income>() : db.Incomes.Where(i => i.Date > fromDate && i.Date < toDate).ToList<Income>();
+        }
+
+        public List<Outgo> GetOutgoesByDataRange(DateTime fromDate,DateTime? toDate)
+        {
+            return toDate == null ? db.Outgos.Include(o => o.User).Where(o => o.Date > fromDate && o.Date < DateTime.Now).ToList<Outgo>() : db.Outgos.Where(o => o.Date > fromDate && o.Date < toDate).ToList<Outgo>();
+        }
+
+        public List<IMoneySpent> GetOuthoesAndIncomesByDateRange(DateTime fromDate,DateTime? toDate)
+        {
+            List<IMoneySpent> list = new List<IMoneySpent>();
+            if (toDate == null)
+            {
+                list.AddRange(db.Incomes.Include(i => i.User).Where(i => i.Date > fromDate && i.Date < DateTime.Now));
+                list.AddRange(db.Outgos.Include(o => o.User).Where(o => o.Date > fromDate && o.Date < DateTime.Now));
+            }
+            else
+            {
+                list.AddRange(db.Incomes.Include(i=>i.User).Where(i => i.Date > fromDate && i.Date < toDate));
+                list.AddRange(db.Outgos.Include(o => o.User).Where(o => o.Date > fromDate && o.Date < toDate));
+            }
+            return list;
         }
         
     }

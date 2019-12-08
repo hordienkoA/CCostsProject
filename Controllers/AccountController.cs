@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CCostsProject.Models;
+using RestSharp;
 
 namespace CConstsProject.Controllers
 {
@@ -34,7 +35,7 @@ namespace CConstsProject.Controllers
             {
                 List<User> users = new List<User>
                 {
-                    new User { UserName = "Admin", Password = "Admin",Position="Admin",WelcomeString="Hi, Master" }
+                    new User { UserName = "Admin",FullName="Andrii Hordiienko",Email="gord34326@gmail.com", Password = "Admin",Position="Admin",WelcomeString="Hi, Master" }
                 };
                 db.Users.AddRange(users);
                 db.SaveChanges();
@@ -161,12 +162,15 @@ namespace CConstsProject.Controllers
         {
             try
             {
-                if (user != null)
-                {
-                    Worker.AddUser(user);
-                    return Ok(Worker.GetLastUser());
-                }
-                return Forbid();
+                
+                    if (Worker.AddUser(user))
+                    {
+                        return Ok(Worker.GetLastUser());
+                    }
+                return StatusCode(400,String.Format("\"messages\":[\n \"type\":\"error\",\n\"text\":\"The user with current email or username already exist\"]"));
+                
+               
+
             }
             catch
             {

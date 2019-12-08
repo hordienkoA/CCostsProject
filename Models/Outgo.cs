@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using CCostsProject.Models;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CConstsProject.Models
 {
-    public  class Outgo
+    public  class Outgo:IMoneySpent
     {
         [Key]
         public int Id { get; set; }

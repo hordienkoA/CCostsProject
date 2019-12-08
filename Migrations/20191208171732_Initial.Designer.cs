@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CConstsProject.Migrations
+namespace CCostsProject.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20191116140022_AddKeys")]
-    partial class AddKeys
+    [Migration("20191208171732_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,9 +42,12 @@ namespace CConstsProject.Migrations
 
                     b.Property<DateTime>("Date");
 
+                    b.Property<double>("Money");
+
                     b.Property<int?>("UserId");
 
-                    b.Property<string>("WorkType");
+                    b.Property<string>("WorkType")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -61,7 +64,8 @@ namespace CConstsProject.Migrations
 
                     b.Property<double>("AvarageCost");
 
-                    b.Property<string>("Type");
+                    b.Property<string>("Type")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -135,15 +139,21 @@ namespace CConstsProject.Migrations
 
                     b.Property<double>("CashSum");
 
+                    b.Property<string>("Email")
+                        .IsRequired();
+
                     b.Property<int?>("FamilyId");
 
-                    b.Property<string>("FullName");
+                    b.Property<string>("FullName")
+                        .IsRequired();
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .IsRequired();
 
                     b.Property<string>("Position");
 
-                    b.Property<string>("UserName");
+                    b.Property<string>("UserName")
+                        .IsRequired();
 
                     b.Property<string>("WelcomeString");
 
@@ -158,18 +168,21 @@ namespace CConstsProject.Migrations
                 {
                     b.HasOne("CConstsProject.Models.User", "User")
                         .WithMany("Incomes")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CConstsProject.Models.Outgo", b =>
                 {
                     b.HasOne("CConstsProject.Models.Item", "Item")
                         .WithMany("Outgos")
-                        .HasForeignKey("ItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CConstsProject.Models.User", "User")
                         .WithMany("Outgoes")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CConstsProject.Models.Task", b =>
@@ -183,7 +196,8 @@ namespace CConstsProject.Migrations
                 {
                     b.HasOne("CConstsProject.Models.Family", "Family")
                         .WithMany("Users")
-                        .HasForeignKey("FamilyId");
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

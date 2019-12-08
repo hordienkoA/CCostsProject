@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CCostsProject.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CConstsProject.Models
 {
-    public class Income
+    public class Income:IMoneySpent
     {
         [Key]
         public int Id { get; set; }
