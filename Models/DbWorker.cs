@@ -166,12 +166,17 @@ namespace CConstsProject.Models
         }
         public void ClearDb()
         {
-            foreach(var tableName in listOfEntities)
-            {
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
-                
-            }
+            db.Database.ExecuteSqlCommand("Delete from Items");
+            db.Database.ExecuteSqlCommand("Delete from Incomes");
+            db.Database.ExecuteSqlCommand("Delete from Outgos");
+            db.Database.ExecuteSqlCommand("Delete from Tasks");
+            db.Database.ExecuteSqlCommand("Delete from TaskManagers");
+            db.Database.ExecuteSqlCommand("Delete from Users");
+            
+           
+            
+            
+
         }
         public bool AddUser(User user)
         {
