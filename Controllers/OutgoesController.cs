@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CCostsProject.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [Route("api/[controller]")]
+    [Route("api/outgoes")]
     public class OutgoesController : Controller
     {
         ApplicationContext db;
@@ -21,30 +21,34 @@ namespace CCostsProject.Controllers
             Worker = new DbWorker(db);
         }
 
+        ///<summary>Add an outgo</summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200">Returns an outgo that was aded </response>
+        ///<response code="401">if the user has not authorized</response>
         ///<response code="403">if request data was incorrect</response>
-        [Authorize]
-        [HttpPost("AddOutgo")]
-        public  IActionResult Post([FromBody]Outgo outgo)
+        [HttpPost]
+        public IActionResult Post([FromBody]Outgo outgo)
         {
             if (outgo != null)
             {
                 outgo.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 Worker.AddOutgo(outgo);
-                Worker.MakeOutgo(User.Identity.Name,outgo.Money);
-                return Ok(outgo+"current cash:");
+                Worker.MakeOutgo(User.Identity.Name, outgo.Money);
+                return Ok(Worker.GetLastOutgo());
             }
             return Forbid();
         }
-
+        ///<summary>Edit an outgo</summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="401">if the user has not authorized</response>
         ///<response code="200">Returns an outgo that was edited </response>
         ///<response code="403">if outho with that id not found</response>
-        [Authorize]
-        [HttpPost("EditOutgo")]
-        public IActionResult Post(int id,double Money,DateTime Date)
+        //[Authorize]
+        [HttpPatch]
+        public IActionResult Post(int id, double Money, DateTime Date)
         {
             Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == id);
-            if (outgo != null&&outgo.User.UserName==User.Identity.Name)
+            if (outgo != null && outgo.User.UserName == User.Identity.Name)
             {
                 outgo.Money = Money;
                 outgo.Date = Date;
@@ -54,10 +58,12 @@ namespace CCostsProject.Controllers
             return Forbid();
         }
 
+        ///<summary>Delete an outgo</summary>
+        ///<response code="401">if the user has not authorized</response>
         ///<response code="200"> </response>
         ///<response code="403">if outho with that id not found</response>
-        [Authorize]
-        [HttpDelete("DeleteOutgo")]
+        //[Authorize]
+        [HttpDelete]
         public IActionResult Delete(int id)
         {
             Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == id);
@@ -70,26 +76,28 @@ namespace CCostsProject.Controllers
             return Forbid();
         }
 
+
+
+        ///<summary>Get an outgo or outgoes</summary>
+        ///<response code="401">if the user has not authorized</response>
         ///<response code="200">Returns outho</response>
         ///<response code="404"> if outgo with that id not found</response>
-        [Authorize]
-        [HttpGet("GetOutgo")]
-        public IActionResult Get([FromBody] int id)
+    
+        //[Authorize]
+        [HttpGet]
+        public IActionResult GetOutgoes([FromHeader] int? id)
         {
-            Outgo outgo = Worker.GetOutgo(id);
-            if (outgo != null)
+            if (id != null)
             {
-                return Json(outgo);
+
+                Outgo outgo = Worker.GetOutgo(id);
+                if (outgo != null)
+                {
+                    return Json(outgo);
+                }
+                return NotFound();
             }
-            return NotFound();
-        }
-
-
-        [Authorize]
-        [HttpGet("GetOutgoes")]
-        public IActionResult GetOutgoes()
-        {
-            return new JsonResult(db.Outgos.Include(o=>o.Item).Include(o=>o.User).Where(o=>o.User.UserName==User.Identity.Name || o.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)).ToList());
+            return new JsonResult(db.Outgos.Include(o => o.Item).Include(o => o.User).Where(o => o.User.UserName == User.Identity.Name).ToList());
         }
     }
 }

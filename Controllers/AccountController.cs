@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +20,8 @@ using CCostsProject.Models;
 
 namespace CConstsProject.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AccountController : Controller
     {
         ApplicationContext db;
@@ -45,61 +45,62 @@ namespace CConstsProject.Controllers
         /// Authentication by JWT
         /// </summary>
 
-        
-        ///<response code="200">Returns an autherization token </response>
-        ///<response code="400">Returns Invalid username or password</response>
 
-        [HttpPost("/login")]
+        ///<response code="200">Returns an autherization token </response>
+        ///<response code="400">Invalid username or password or incorect request data</response>
+        [AllowAnonymous]
+        [HttpPost("login")]
         public async System.Threading.Tasks.Task Token()
         {
-            var username = Request.Form["username"];
-            var password = Request.Form["password"];
-            var identity = GetIdentity(username, password);
-            if (identity == null)
+            try
+            {
+                var username = Request.Form["username"];
+                var password = Request.Form["password"];
+                var identity = GetIdentity(username, password);
+                if (identity == null)
+                {
+                    Response.StatusCode = 400;
+                    await Response.WriteAsync("Invalid username or password");
+                    return;
+                }
+                var now = DateTime.UtcNow;
+                var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                        audience: AuthOptions.AUDIENCE,
+                        notBefore: now,
+                        claims: identity.Claims,
+                        expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                        signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+                var response = new
+                {
+                    access_token = encodedJwt,
+                    username = identity.Name
+                };
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            }
+            catch
             {
                 Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password");
-                return;
+                await Response.WriteAsync("Bad request");
             }
-            var now = DateTime.UtcNow;
-            var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-
         }
         /// <summary>
         /// Authentication by JWT
         /// </summary>
-        ///<remarks>
-        ///Sample request:
-        ///
-        ///Post /jsonLogin 
-        ///{
-        ///"username":"Admin",
-        ///"password":"Admin"
-        ///}
-        /// </remarks>
+      
         ///<response code="200">Returns an autherization token </response>
-        ///<response code="400">Returns Invalid username or password</response>
+        ///<response code="400">Returns Invalid username or password or incorect request data</response>
         [Produces("application/json")]
-        [HttpPost("/jsonLogin")]
-        public async System.Threading.Tasks.Task Tocken([FromBody] LoginViewModel value)
+        [AllowAnonymous]
+        [HttpPost("jsonLogin")]
+        public async System.Threading.Tasks.Task Token([FromBody] LoginViewModel value)
         {
 
-            
-            var identity = GetIdentity(value.username, value.password);
+            try
+            {
+                var identity = GetIdentity(value.username, value.password);
             if (identity == null)
             {
                 Response.StatusCode = 400;
@@ -122,6 +123,12 @@ namespace CConstsProject.Controllers
             };
             Response.ContentType = "application/json";
             await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+                await Response.WriteAsync("Bad request");
+            }
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -140,47 +147,76 @@ namespace CConstsProject.Controllers
             }
             return null;
         }
-        
-        [HttpGet("GetUsers")]
-        public IActionResult Get()
-        {
-            return new JsonResult(db.Users.ToList());
-        }
 
-        [HttpPost("AddUser")]
+       
+        /// <summary>
+        /// Add new user
+        /// </summary>
+        ///<response code="200">If user was added successfull </response>
+        ///<response code="403">if user with that username exist</response>
+        ///<response code="400">Bad request</response>
+        [AllowAnonymous]
+        [HttpPost("registration")]
         public IActionResult Post([FromBody]User user)
         {
-            if (user != null)
+            try
             {
-                Worker.AddUser(user);
-                return Ok();
-            }
-            return Forbid();
-        }
-
-      
-        ///<response code="200">Returns the user </response>
-        ///<response code="403">if auth username!=Admin</response>
-        ///<response code="404">if user with those id not found </response>
-        [Authorize]
-        
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            if (User.Identity.Name == "Admin")
-            {
-                User user = Worker.GetUser(id);
                 if (user != null)
                 {
-                    return Json(user);
-
+                    Worker.AddUser(user);
+                    return Ok(Worker.GetLastUser());
                 }
-
-
-                return NotFound();
-
+                return Forbid();
             }
-            return Forbid("Permision denied");
+            catch
+            {
+                return BadRequest();
+            }
         }
+
+
+        /// <summary>
+        /// Get a user by id or users 
+        /// </summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="200">Returns the user </response>
+        ///<response code="403">if auth username!=Admin</response>
+        ///<response code="401">if the user has not authorized</response>
+        ///<response code="404">if user with that id not found </response>
+        [HttpGet]
+        public IActionResult Get([FromHeader] int? id)
+        {
+            try
+            {
+                if (User.Identity.Name.Trim() == "Admin")
+                {
+                    if (id != null)
+                    {
+                        User user = Worker.GetUser(id);
+                        if (user != null)
+                        {
+                            return Json(user);
+
+                        }
+
+                        return NotFound();
+
+                    }
+
+                else
+                    {
+                        return new JsonResult(db.Users.ToList());
+                    }
+                }
+                else
+                {
+                    return StatusCode(403, "Permission denied");
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            }
     }
 }

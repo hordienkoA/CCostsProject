@@ -175,21 +175,38 @@ namespace CConstsProject.Models
             db.Users.Add(user);
             db.SaveChanges();
         }
-        public User GetUser(int id)
+        public User GetUser(int? id)
         {
             return db.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public Outgo GetOutgo(int id)
+        public Outgo GetOutgo(int? id)
         {
             return db.Outgos.FirstOrDefault(o => o.Id == id);
         }
 
-        public Income GetIncome(int id)
+        public Income GetIncome(int? id)
         {
             return db.Incomes.FirstOrDefault(i => i.Id == id);
         }
+        public  Income GetLastIncome()
+        {
+             return  db.Incomes.Last();
+        }
 
+        public Outgo GetLastOutgo()
+        {
+            return db.Outgos.Last();
+        }
+        
+        public Item GetLastItem()
+        {
+            return db.Items.Last();
+        }
+        public User GetLastUser()
+        {
+            return db.Users.Last();
+        }
         public Family GetFamily(int id)
         {
             return db.Families.FirstOrDefault(f => f.Id == id);
