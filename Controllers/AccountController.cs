@@ -18,6 +18,9 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CCostsProject.Models;
 using RestSharp;
+using CCostsProject.json_structure;
+using System.Text;
+using System.Net.Http;
 
 namespace CConstsProject.Controllers
 {
@@ -105,7 +108,7 @@ namespace CConstsProject.Controllers
             if (identity == null)
             {
                 Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password");
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("","Invalid username or password","Error",null));
                 return;
             }
             var now = DateTime.UtcNow;
@@ -123,12 +126,13 @@ namespace CConstsProject.Controllers
                 username = identity.Name
             };
             Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            await Response.WriteAsync(JsonResponseFactory.CreateJson("","ok","Success",response));
             }
             catch
             {
                 Response.StatusCode = 400;
-                await Response.WriteAsync("Bad request");
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
             }
         }
 
@@ -157,24 +161,34 @@ namespace CConstsProject.Controllers
         ///<response code="403">if user with that username exist</response>
         ///<response code="400">Bad request</response>
         [AllowAnonymous]
+        [Produces("application/json")]
         [HttpPost("registration")]
-        public IActionResult Post([FromBody]User user)
+        public async System.Threading.Tasks.Task Post([FromBody]User user)
         {
             try
             {
                 
                     if (Worker.AddUser(user))
                     {
-                        return Ok(Worker.GetLastUser());
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("","Ok","Success", Worker.GetLastUser()));
+                    return;
                     }
-                return StatusCode(400,String.Format("\"messages\":[\n \"type\":\"error\",\n\"text\":\"The user with current email or username already exist\"]"));
+                
+                Response.ContentType = "application/json";
+                Response.StatusCode = 400;
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("email or username", "email or username are not unique", "Error", null)) ;
+                
                 
                
 
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
             }
         }
 
@@ -188,7 +202,7 @@ namespace CConstsProject.Controllers
         ///<response code="401">if the user has not authorized</response>
         ///<response code="404">if user with that id not found </response>
         [HttpGet]
-        public IActionResult Get([FromHeader] int? id)
+        public async System.Threading.Tasks.Task Get([FromHeader] int? id)
         {
             try
             {
@@ -199,27 +213,42 @@ namespace CConstsProject.Controllers
                         User user = Worker.GetUser(id);
                         if (user != null)
                         {
-                            return Json(user);
+                            Response.StatusCode = 200;
+                            Response.ContentType = "application/json";
+                            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok","Success",user));
+                            return;
 
                         }
-
-                        return NotFound();
+                        Response.StatusCode = 404;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error",null));
+                        return;
 
                     }
 
                 else
                     {
-                        return new JsonResult(db.Users.ToList());
+                        Response.StatusCode = 200;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("",  "Ok","Success", db.Users.ToList()));
+                        return;
+                       
                     }
                 }
                 else
                 {
-                    return StatusCode(403, "Permission denied");
+                    Response.StatusCode = 403;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Permission denied", "Error",null));
+                    return;
                 }
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
+                
             }
             }
     }

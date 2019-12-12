@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
+using CCostsProject.json_structure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CCostsProject.Controllers
@@ -27,7 +29,7 @@ namespace CCostsProject.Controllers
         ///<response code="400">"Bad request"</response>
         //[Authorize]
         [HttpPost]
-        public IActionResult Post([FromBody] Income income)
+        public async System.Threading.Tasks.Task Post([FromBody] Income income)
         {
             try
             {
@@ -36,13 +38,22 @@ namespace CCostsProject.Controllers
                     income.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                     Worker.AddIncome(income);
                     Worker.MakeIncome(User.Identity.Name, income.Money);
-                    return Ok(Worker.GetLastIncome());
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetLastIncome()));
+                    return;
                 }
-                return Forbid();
+                Response.StatusCode = 403;
+                Response.ContentType= "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                return ;
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+               
             }
         }
         ///<summary>Delete an income</summary>
@@ -52,7 +63,7 @@ namespace CCostsProject.Controllers
         ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async System.Threading.Tasks.Task Delete(int id)
         {
             try
             {
@@ -61,13 +72,21 @@ namespace CCostsProject.Controllers
                 if (income != null && income.User.UserName == User.Identity.Name)
                 {
                     Worker.DeleteIncom(id);
-                    return Ok();
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
+                    return;
                 }
-                return Forbid();
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                return;
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
             }
         ///<summary>Edit an income</summary>
@@ -77,7 +96,7 @@ namespace CCostsProject.Controllers
         ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpPatch]
-        public IActionResult Patch(int id, string WorkType, DateTime Date)
+        public async System.Threading.Tasks.Task Patch(int id, string WorkType, DateTime Date)
         {
             try
             {
@@ -85,13 +104,21 @@ namespace CCostsProject.Controllers
                 if (income != null && income.User.UserName == User.Identity.Name)
                 {
                     Worker.EditIncome(id, WorkType, Date);
-                    return Ok(income);
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", income));
+                    return;
                 }
-                return Forbid();
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                return;
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
         ///<summary>Get an income or  incomes </summary>
@@ -101,7 +128,7 @@ namespace CCostsProject.Controllers
         ///<response code="404"> if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpGet]
-        public IActionResult Get([FromHeader] int? id)
+        public async System.Threading.Tasks.Task Get([FromHeader] int? id)
         {
             if (id != null)
             {
@@ -110,18 +137,31 @@ namespace CCostsProject.Controllers
                     Income income = Worker.GetIncome(id);
                     if (income != null)
                     {
-                        return Json(income);
+                        Response.StatusCode = 200;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", income));
+                        return;
+                       
                     }
-                    return NotFound();
+                    Response.StatusCode = 404;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null));
+                    return;
                 }
                 catch
                 {
-                    return BadRequest();
+                    Response.StatusCode = 400;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                 }
             }
             else
             {
-                return new JsonResult(Worker.GetIncomes().Where(u => (u.User.UserName == User.Identity.Name || u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name))));
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetIncomes().Where(u => (u.User.UserName == User.Identity.Name || u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)))));
+                return;
+                
             }
         }
     

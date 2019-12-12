@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CConstsProject.Models;
+using CCostsProject.json_structure;
 using CCostsProject.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CCostsProject.Controllers
@@ -30,17 +32,24 @@ namespace CCostsProject.Controllers
         ///<response code="200">Returns all incomes in current date range </response>
         ///<response code="400">BadRequest</response>
         [HttpGet("incomes-by-date")]
-        public IActionResult GetIncomes([FromHeader]DateTime fromDate, [FromHeader]DateTime? toDate)
+        public async System.Threading.Tasks.Task GetIncomes([FromHeader]DateTime fromDate, [FromHeader]DateTime? toDate)
         {
             try
             {
                 List<Income> list = worker.GetIncomesByDateRange(fromDate, toDate);
-                return Json(list.Where(i => i.User.UserName == User.Identity.Name).ToList());
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(i => i.User.UserName == User.Identity.Name).ToList()));
+                return;
+                
 
             }
             catch
             {
-                return BadRequest();
+
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
 
@@ -50,17 +59,24 @@ namespace CCostsProject.Controllers
         ///<response code="200">Returns all outgoes in current date range </response>
         ///<response code="400">BadRequest</response>
         [HttpGet("outgoes-by-date")]
-        public IActionResult GetOutgoes([FromHeader]DateTime fromDate, [FromHeader]DateTime? toDate)
+        public async System.Threading.Tasks.Task GetOutgoes([FromHeader]DateTime fromDate, [FromHeader]DateTime? toDate)
         {
             try
             {
                 List<Outgo> list = worker.GetOutgoesByDataRange(fromDate, toDate);
-                return Json(list.Where(o => o.User.UserName == User.Identity.Name));
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(o => o.User.UserName == User.Identity.Name)));
+                return;
+                
 
             }
             catch
             {
-                return BadRequest();
+
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
 
@@ -71,17 +87,24 @@ namespace CCostsProject.Controllers
         ///<response code="200">Returns all outgoes and incomes in current date range </response>
         ///<response code="400">BadRequest</response>
         [HttpGet("outgoes-and-incomes-by-date")]
-        public IActionResult GetOutgoesAndIncomes([FromHeader]DateTime fromDate, [FromHeader]DateTime? toDate)
+        public async System.Threading.Tasks.Task GetOutgoesAndIncomes([FromHeader]DateTime fromDate, [FromHeader]DateTime? toDate)
         {
             try
             {
                 List<IMoneySpent> list = worker.GetOuthoesAndIncomesByDateRange(fromDate, toDate);
-                return Json(list.Where(m => m.User.UserName == User.Identity.Name));
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(m => m.User.UserName == User.Identity.Name)));
+                return;
+
+               
 
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
     }

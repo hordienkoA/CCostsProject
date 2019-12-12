@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
+using CCostsProject.json_structure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CCostsProject.Controllers
@@ -29,20 +31,29 @@ namespace CCostsProject.Controllers
 
         [HttpPost]
         [Produces("application/json")]
-        public IActionResult Post([FromBody]Item item)
+        public async System.Threading.Tasks.Task Post([FromBody]Item item)
         {
             try
             {
                 if (item == null)
                 {
-                    return Forbid();
+                    Response.StatusCode = 403;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                    return;
                 }
                 worker.AddItem(item.AvarageCost, item.Type);
-                return Ok(worker.GetLastItem());
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetLastItem()));
+                return;
+                
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
 
@@ -52,11 +63,15 @@ namespace CCostsProject.Controllers
         ///<returns code="200">return all items that was created by current user</returns>
         ///<response code="404"> if item with that id not found</response>
         [HttpGet("/api/items")]
-        public IActionResult Get([FromHeader] int? id)
+        public async System.Threading.Tasks.Task Get([FromHeader] int? id)
         {
             if (id == null)
             {
-                return Json(worker.GetItems());
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetItems()));
+                return;
+              
             }
             else
             {
@@ -65,13 +80,22 @@ namespace CCostsProject.Controllers
                     Item item = db.Items.FirstOrDefault(i => i.Id == id);
                     if (item == null)
                     {
-                        return NotFound();
+                        Response.StatusCode = 404;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null));
+                        return;
                     }
-                    return Json(item);
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", item));
+                    return;
+                   
                 }
                 catch
                 {
-                    return BadRequest();
+                    Response.StatusCode = 400;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                 }
             }
             
@@ -87,21 +111,29 @@ namespace CCostsProject.Controllers
         ///<response code="403"> if item with that id not found</response>
 
         [HttpDelete]
-        public IActionResult DelItem(int id)
+        public async System.Threading.Tasks.Task DelItem(int id)
         {
             try
             {
                 Item item = db.Items.FirstOrDefault(i => i.Id == id);
             if (item == null)
             {
-                return Forbid();
-            }
+                    Response.StatusCode = 403;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                    return;
+                }
             worker.DeleteItem(id);
-            return Ok();
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
+                return;
             }
             catch
             {
-                return BadRequest();
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
 

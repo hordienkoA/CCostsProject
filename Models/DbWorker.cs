@@ -184,10 +184,10 @@ namespace CConstsProject.Models
             {
                 return false;
             }
-            else if (ValidateUser(user))
-            {
-                return false;
-            }
+            //else if (ValidateUser(user))
+            //{
+            //    return false;
+            //}
             db.Users.Add(user);
             db.SaveChanges();
             return true;
