@@ -16,6 +16,7 @@ namespace CConstsProject.Models
         public string WorkType { get; set; }
         [Required]
         public double Money { get; set; }
+        public string type { get; set; }
         [Required]
         public DateTime Date { get; set; }
         [JsonIgnore]

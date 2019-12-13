@@ -63,8 +63,9 @@ namespace CCostsProject.Controllers
         ///<returns code="200">return all items that was created by current user</returns>
         ///<response code="404"> if item with that id not found</response>
         [HttpGet("/api/items")]
-        public async System.Threading.Tasks.Task Get([FromHeader] int? id)
+        public async System.Threading.Tasks.Task Get([FromHeader] string id)
         {
+            int IntegerId;
             if (id == null)
             {
                 Response.StatusCode = 200;
@@ -73,11 +74,11 @@ namespace CCostsProject.Controllers
                 return;
               
             }
-            else
+            else if(Int32.TryParse(id, out IntegerId))
             {
                 try
                 {
-                    Item item = db.Items.FirstOrDefault(i => i.Id == id);
+                    Item item = db.Items.FirstOrDefault(i => i.Id == IntegerId);
                     if (item == null)
                     {
                         Response.StatusCode = 404;
@@ -97,6 +98,12 @@ namespace CCostsProject.Controllers
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                 }
+            }
+            else
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
             
             

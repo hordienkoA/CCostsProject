@@ -128,13 +128,14 @@ namespace CCostsProject.Controllers
         ///<response code="404"> if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpGet]
-        public async System.Threading.Tasks.Task Get([FromHeader] int? id)
+        public async System.Threading.Tasks.Task Get([FromHeader] string id)
         {
-            if (id != null)
+            int IntegerId;
+            if (Int32.TryParse(id, out IntegerId))
             {
                 try
                 {
-                    Income income = Worker.GetIncome(id);
+                    Income income = Worker.GetIncome(IntegerId);
                     if (income != null)
                     {
                         Response.StatusCode = 200;
@@ -155,13 +156,20 @@ namespace CCostsProject.Controllers
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                 }
             }
-            else
+            else if (id == null)
             {
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetIncomes().Where(u => (u.User.UserName == User.Identity.Name || u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)))));
                 return;
                 
+            }
+
+            else
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
     

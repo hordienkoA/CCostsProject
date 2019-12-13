@@ -31,6 +31,7 @@ namespace CCostsProject.Controllers
         [HttpPost]
         public async System.Threading.Tasks.Task Post([FromBody]Outgo outgo)
         {
+
             if (outgo != null)
             {
                 outgo.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
@@ -107,29 +108,48 @@ namespace CCostsProject.Controllers
     
         //[Authorize]
         [HttpGet]
-        public async System.Threading.Tasks.Task GetOutgoes([FromHeader] int? id)
+        public async System.Threading.Tasks.Task GetOutgoes([FromHeader] string  id)
         {
-            if (id != null)
+            try
             {
+                int IntegerId;
+                if (Int32.TryParse(id, out IntegerId))
+                {
 
-                Outgo outgo = Worker.GetOutgo(id);
-                if (outgo != null)
+                    Outgo outgo = Worker.GetOutgo(IntegerId);
+                    if (outgo != null)
+                    {
+                        Response.StatusCode = 200;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", outgo));
+                        return;
+
+                    }
+                    Response.StatusCode = 404;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null));
+                    return;
+                }
+                else if (id == null)
                 {
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", outgo));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", db.Outgos.Include(o => o.Item).Include(o => o.User).Where(o => o.User.UserName == User.Identity.Name).ToList()));
                     return;
-                   
                 }
-                Response.StatusCode = 404;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null));
-                return;
+                else
+                {
+                    Response.StatusCode = 400;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                }
             }
-            Response.StatusCode = 200;
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", db.Outgos.Include(o => o.Item).Include(o => o.User).Where(o => o.User.UserName == User.Identity.Name).ToList()));
-            return;
+            catch
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+            }
           
         }
     }

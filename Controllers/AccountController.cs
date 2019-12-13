@@ -95,7 +95,7 @@ namespace CConstsProject.Controllers
         /// </summary>
       
         ///<response code="200">Returns an autherization token </response>
-        ///<response code="400">Returns Invalid username or password or incorect request data</response>
+        ///<response code="401">Returns Invalid username or password or incorect request data</response>
         [Produces("application/json")]
         [AllowAnonymous]
         [HttpPost("jsonLogin")]
@@ -107,7 +107,7 @@ namespace CConstsProject.Controllers
                 var identity = GetIdentity(value.username, value.password);
             if (identity == null)
             {
-                Response.StatusCode = 400;
+                Response.StatusCode = 401;
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("","Invalid username or password","Error",null));
                 return;
             }
@@ -158,7 +158,7 @@ namespace CConstsProject.Controllers
         /// Add new user
         /// </summary>
         ///<response code="200">If user was added successfull </response>
-        ///<response code="403">if user with that username exist</response>
+        ///<response code="401">if user with that username exist</response>
         ///<response code="400">Bad request</response>
         [AllowAnonymous]
         [Produces("application/json")]
@@ -202,15 +202,17 @@ namespace CConstsProject.Controllers
         ///<response code="401">if the user has not authorized</response>
         ///<response code="404">if user with that id not found </response>
         [HttpGet]
-        public async System.Threading.Tasks.Task Get([FromHeader] int? id)
+        public async System.Threading.Tasks.Task Get([FromHeader] string id)
         {
+            int IntegerId;
             try
             {
-                if (User.Identity.Name.Trim() == "Admin")
+
+            if (User.Identity.Name.Trim() == "Admin")
                 {
-                    if (id != null)
+                    if (Int32.TryParse(id,out IntegerId))
                     {
-                        User user = Worker.GetUser(id);
+                        User user = Worker.GetUser(IntegerId);
                         if (user != null)
                         {
                             Response.StatusCode = 200;
@@ -226,7 +228,8 @@ namespace CConstsProject.Controllers
 
                     }
 
-                else
+               
+                else if(id==null)
                     {
                         Response.StatusCode = 200;
                         Response.ContentType = "application/json";
@@ -234,7 +237,14 @@ namespace CConstsProject.Controllers
                         return;
                        
                     }
+                else
+                {
+                    Response.StatusCode = 400;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                 }
+
+            }
                 else
                 {
                     Response.StatusCode = 403;
@@ -245,9 +255,9 @@ namespace CConstsProject.Controllers
             }
             catch
             {
-                Response.StatusCode = 400;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
+               Response.StatusCode = 400;
+               Response.ContentType = "application/json";
+               await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
                 
             }
             }

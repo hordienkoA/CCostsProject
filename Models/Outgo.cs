@@ -11,7 +11,9 @@ namespace CConstsProject.Models
         public int Id { get; set; }
         public double Money { get; set; }
         public DateTime Date { get; set; }
-        [JsonIgnore]
+        public string Type { get; set; }
+        public string Description { get; set; }
+        
         public int? ItemId { get; set; }
         [JsonIgnore]
         public Item Item { get; set; }
