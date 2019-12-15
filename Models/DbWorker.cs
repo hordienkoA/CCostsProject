@@ -96,7 +96,7 @@ namespace CConstsProject.Models
                 db.SaveChanges();
            }
         }
-        public void EditItem(int id,double? AvarageCost,string Type)
+        public bool EditItem(int id,double? AvarageCost,string Type)
         {
             Item item = db.Items.FirstOrDefault(i => i.Id == id);
             if (item != null)
@@ -104,7 +104,9 @@ namespace CConstsProject.Models
                 item.AvarageCost = AvarageCost==null?item.AvarageCost:(double)AvarageCost;
                 item.Type = Type;
                 db.SaveChanges();
+                return true;
             }
+            return false;
 
         }
         public List<Item> GetItems()

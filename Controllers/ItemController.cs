@@ -164,8 +164,10 @@ namespace CCostsProject.Controllers
             {
                 if (item != null)
             {
-                worker.EditItem(item.Id, item.AvarageCost, item.Type);
-                return Ok(item);
+
+                    if (worker.EditItem(item.Id, item.AvarageCost, item.Type)){
+                        return Ok(item);
+                    }
 
             }
             return BadRequest();
