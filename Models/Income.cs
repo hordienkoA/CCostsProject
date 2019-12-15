@@ -18,7 +18,8 @@ namespace CConstsProject.Models
         [Required]
         public double Money { get; set; }
 
-        public string type { get; set; }
+        public string IncomeType { get; set; }
+        public string Description { get; set; }
         [Required]
         public DateTime Date { get; set; }
         [JsonIgnore]
