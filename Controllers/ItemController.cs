@@ -124,7 +124,7 @@ namespace CCostsProject.Controllers
         ///<response code="403"> if item with that id not found</response>
 
         [HttpDelete]
-        public async System.Threading.Tasks.Task DelItem(int id)
+        public async System.Threading.Tasks.Task DelItem([FromHeader]int id)
         {
             try
             {

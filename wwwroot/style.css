@@ -1,0 +1,303 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background-color: #2699fb;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+}
+
+a:hover {
+    color: #333333;
+}
+
+.left-nav {
+    align-items: center;
+    display: flex;
+}
+
+.right-nav {
+    display: flex;
+    margin-left: 60%;
+}
+
+img {
+    margin-left: -8px;
+    margin-top: 5px;
+    width: 70px;
+}
+
+header a {
+    margin-left: 20px;
+}
+
+a {
+    transition: 0.3s;
+    color: white;
+    text-decoration: none;
+}
+
+.main {
+    margin: 10px 10px 10px 10px;
+    height: 447px;
+    display: flex;
+}
+
+.money {
+    width: 900px;
+    height: 100px;
+    display: flex;
+}
+
+.total {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 500px;
+}
+
+.budget {
+    display: flex;
+}
+
+.price {
+    color: #4ad991;
+    padding-left: 70%;
+}
+
+.month {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 500px;
+}
+
+.banner {
+
+}
+
+.offer {
+    background-color: #f1f9ff;
+    margin-top: -20px;
+    height: 80%;
+    width: 100%;
+    display: flex;
+}
+
+.offer-fblock {
+    width: 15%;
+    background-color: white;
+}
+
+.offer-sblock {
+    width: 20%;
+    background-color: #7fc4fd;
+}
+
+.offer-sblock img {
+    margin-left: -100px;
+    margin-top: 90px;
+    width: 200px;
+}
+
+.offer-tblock {
+    width: 40%;
+    padding-left: 20%;
+    align-self: center;
+}
+
+.offer-tblock p {
+    width: 100%;
+    color: #2699fb;
+    font-size: 30px;
+    padding-bottom: 30px;
+}
+
+.offer-tblock button {
+    text-transform: uppercase;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: #2699fb;
+    color: #2699fb;
+    background-color: #f1f9ff;
+    padding: 10px 10px 10px 10px;
+    margin-right: 40px;
+}
+
+.offer-tblock button:hover {
+    cursor: pointer;
+    background-color: #2699fb;
+    color: white;
+}
+
+.trends {
+    width: 349px;
+
+}
+
+footer {
+    background-color: #2699fb;
+}
+
+footer h4 {
+    color: white;
+}
+
+footer ul {
+    padding-top: 10px;
+}
+
+footer li {
+    font-size: 14px;
+    padding-bottom: 4px;
+    list-style-type: none;
+}
+
+.footer__nav {
+    padding: 20px 30px 10px 30px;
+    display: flex;
+}
+
+.footer__nav-contact-us {
+    width: 25%;
+}
+
+.footer__nav-customer-service {
+    width: 25%;
+}
+
+.footer__nav-information {
+    width: 25%;
+}
+
+.footer__nav-placeholder {
+    margin-top: 5px;
+}
+
+.footer__nav-placeholder-email {
+    padding: 7px 7px 7px 7px;
+    border-radius: 5px;
+    border: none;
+}
+
+.footer__nav-placeholder-email::placeholder {
+    color: black;
+}
+
+.footer__nav-placeholder-submit {
+    cursor: pointer;
+    background-color: white;
+    padding: 7px 7px 7px 7px;
+    margin-left: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.footer__nav-subscribe {
+
+}
+
+.footer__nav-subscribe li {
+    color: white;
+}
+
+.footer__nav-rights {
+    color: white;
+    font-size: 12px;
+    padding-top: 10px;
+    margin-bottom: -10px;
+}
+
+form {
+    width: 100%;
+    align-self: center;
+    margin-left: 10%;
+}
+
+form input {
+    margin-bottom: 10px;
+}
+
+#columnchart_material {
+    padding-left: 20px;
+}
+
+.full-report {
+    width: 450px;
+    height: 55px;
+    background-color: white;
+}
+
+.full-report button {
+    margin-left: 27%;
+    margin-top: 6%;
+    border: none;
+    background-color: white;
+    color: #3b86ff;
+    cursor: pointer;
+}
+
+.charts {
+    display: flex;
+}
+
+.form {
+    margin-left: 50px;
+    display: block;
+    padding-left: 5%;
+    border-radius: 20px;
+    width: 270px;
+    background-color: #2699fb;
+}
+
+.form__input {
+    width: 240px;
+    border: none;
+    border-radius: 15px;
+    padding: 8px 8px 8px 8px;
+}
+
+.form__button {
+    width: 80px;
+    padding: 8px 8px 8px 8px;
+    border-radius: 15px;
+    border-color: white;
+    background-color: #2699fb;
+    margin-left: 37px;
+    border-style: solid;
+    color: white;
+    cursor: pointer;
+}
+
+.form__button:hover {
+    transition: 0.5s;
+    color: black;
+    background-color: white;
+}
+
+.bottom-form {
+    display: flex;
+}
+
+.bottom-form a {
+    margin-left: 25px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+#form__button-submit {
+    margin-left: 23px;
+}
+.form .fa-user {
+    color:#2699fb;
+    margin-left: -30px;
+    cursor: auto;
+}
+
+

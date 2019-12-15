@@ -15,4 +15,19 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0-rc1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\contacts.html" />
+    <None Include="wwwroot\goals.html" />
+    <None Include="wwwroot\img\color-152888_960_720.png" />
+    <None Include="wwwroot\img\full_ral502412.png" />
+    <None Include="wwwroot\img\logo.png" />
+    <None Include="wwwroot\incomes.html" />
+    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\items.html" />
+    <None Include="wwwroot\logged.html" />
+    <None Include="wwwroot\outgoes.html" />
+    <None Include="wwwroot\reg.html" />
+    <None Include="wwwroot\script.js" />
+  </ItemGroup>
+
 </Project>

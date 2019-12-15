@@ -64,7 +64,7 @@ namespace CCostsProject.Controllers
         ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpDelete]
-        public async System.Threading.Tasks.Task Delete(int id)
+        public async System.Threading.Tasks.Task Delete([FromHeader]int id)
         {
             try
             {

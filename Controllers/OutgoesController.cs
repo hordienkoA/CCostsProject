@@ -80,7 +80,7 @@ namespace CCostsProject.Controllers
         ///<response code="403">if outho with that id not found</response>
         //[Authorize]
         [HttpDelete]
-        public async System.Threading.Tasks.Task Delete(int id)
+        public async System.Threading.Tasks.Task Delete([FromHeader]int id)
         {
             Outgo outgo = db.Outgos.Include(o => o.User).FirstOrDefault(o => o.Id == id);
             if (outgo != null && outgo.User.UserName == User.Identity.Name)

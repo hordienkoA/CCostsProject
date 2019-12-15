@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Considered Costs</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css"
+          integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+<header>
+    <nav>
+        <div class="left-nav">
+            <div class="logo">
+                <a href="logged.html"><img src="img/logo.png" alt="logo"></a>
+            </div>
+            <a href="incomes.html">Incomes</a>
+            <a href="outgoes.html">Outgoes</a>
+            <a href="goals.html">Goals</a>
+            <a href="items.html">Items</a>
+            <a href="contacts.html">Contacts</a>
+        </div>
+        <div class="right-nav">
+            <a href="#"><i class="fas fa-bell"></i></a>
+            <a href="#"><i class="fas fa-user"></i></a>
+        </div>
+    </nav>
+</header>
+<div class="main">
+    <div class="banner">
+        <div class="charts">
+            <div id="chart_div" ></div>
+            <div id="chart_div1"></div>
+        </div>
+    </div>
+    <div class="trends">
+        <form id="form" class="form">
+            <br>
+            <input id="form__input-username" class="form__input" name="username" placeholder="Username" type="text" required/><a href="#"><i class="fas fa-user"></i></a>
+            <input id="form__input-email" class="form__input" name="emailaddress" placeholder="Email" type="text" required/><a href="#"><i class="fas fa-user"></i></a>
+            <input id="form__input-name" class="form__input" name="name" placeholder="First name" type="text" required/><a href="#"><i class="fas fa-user"></i></a>
+            <input id="form__input-surname" class="form__input" name="surname" placeholder="Second name" type="text" required/><a href="#"><i class="fas fa-user"></i></a>
+            <input id="form__input-pwd" class="form__input" name="password" placeholder="Password" type="password" required/><a href="#"><i class="fas fa-user"></i></a>
+            <input id="form__input-cpwd" class="form__input" name="cpassword" placeholder="Confirm password" type="password" required/><a href="#"><i class="fas fa-user"></i></a><br><br>
+            <div class="bottom-form">
+                <a href="index.html">Already has an account?</a>
+            <input id="form__button-submit" class="form__button" name="submit" type="submit" value="Register"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__nav">
+            <div class="footer__nav-contact-us">
+                <h4>Contact us</h4>
+                <ul>
+                    <li><a href="#">+44 345 678 903</a></li>
+                    <li><a href="#">gord228@gmail.com</a></li>
+                    <li><a href="#">Find a store</a></li>
+                    <!--<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>-->
+                    <!--<li><a href="#"><i class="fab fa-twitter"></i></a></li>-->
+                    <!--<li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>-->
+                    <!--<li><a href="#"><i class="fab fa-instagram"></i></a></li>-->
+                    <!--<li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>-->
+                </ul>
+            </div>
+            <div class="footer__nav-customer-service">
+                <h4>Customer service</h4>
+                <ul>
+                    <!--<li><a href="#">Contact Us</a></li>-->
+                    <li><a href="#">Ordering & Payment</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer__nav-information">
+                <h4>Information</h4>
+                <ul>
+                    <li><a href="#">About Adobe XD Kit</a></li>
+                    <li><a href="#">Work With Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <!--<li><a href="#">Press Enquires</a></li>-->
+                </ul>
+            </div>
+            <div class="footer__nav-subscribe">
+                <h4>Subscribe to news</h4>
+                <ul>
+                    <li>
+                        <div class="footer__nav-placeholder">
+                            <input class="footer__nav-placeholder-email" type="email"
+                                   placeholder="Enter your Email Address">
+                            <button class="footer__nav-placeholder-submit" id="btn-subscribe">Subscribe</button>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="footer__nav-rights">
+                        © Considered Costs. All rights reserved. This is a demo store only.
+                            <br>Orders made WILL NOT be processed.
+                    </div></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</footer>
+<script src="script.js"></script>
+</body>
+</html>

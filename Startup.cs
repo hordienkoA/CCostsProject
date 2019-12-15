@@ -105,17 +105,9 @@ namespace CConstsProject
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
 
-            }
-            else
-            {
-
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -123,7 +115,7 @@ namespace CConstsProject
 
             });
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            
             // app.UseCookiePolicy();
             app.UseAuthentication();
             //app.UseAuthorization(); 
