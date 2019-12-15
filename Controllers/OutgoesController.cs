@@ -92,9 +92,9 @@ namespace CCostsProject.Controllers
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
                 return;
             }
-            Response.StatusCode = 403;
+            Response.StatusCode = 400;
             Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             return;
         }
 

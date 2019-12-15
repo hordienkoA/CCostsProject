@@ -14,7 +14,7 @@ namespace CCostsProject.Controllers
 {
 
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [Route("api/screen")]
+    [Route("api/points")]
     public class ScreenController : Controller
     {
 
@@ -41,7 +41,7 @@ namespace CCostsProject.Controllers
         //        Response.ContentType = "application/json";
         //        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(i => i.User.UserName == User.Identity.Name).ToList()));
         //        return;
-                
+
 
         //    }
         //    catch
@@ -68,7 +68,7 @@ namespace CCostsProject.Controllers
         //        Response.ContentType = "application/json";
         //        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(o => o.User.UserName == User.Identity.Name)));
         //        return;
-                
+
 
         //    }
         //    catch
@@ -82,7 +82,9 @@ namespace CCostsProject.Controllers
 
 
         ///<summary>Get outgoes and incomes by date range</summary>
-        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request. if we didn't specify a toDate, the current date will be selected </remarks>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request. if we didn't specify a toDate, the current date will be selected<br/>
+        ///"type": string (incomes / outgoes / items / incomesAndOutgoes)<br/>
+        ///"period":string (lastMonth / lastThreeMonth / lastHalfYear / lastYear / " " blank - all time)</remarks>
         ///<response code="401">if the user has not authorized</response>
         ///<response code="200">Returns all outgoes and incomes in current date range </response>
         ///<response code="400">BadRequest</response>

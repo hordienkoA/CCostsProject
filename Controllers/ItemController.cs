@@ -131,9 +131,9 @@ namespace CCostsProject.Controllers
                 Item item = db.Items.FirstOrDefault(i => i.Id == id);
             if (item == null)
             {
-                    Response.StatusCode = 403;
+                    Response.StatusCode = 400;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                     return;
                 }
             worker.DeleteItem(id);
