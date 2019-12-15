@@ -66,8 +66,8 @@ namespace CCostsProject.Controllers
         [HttpDelete]
         public async System.Threading.Tasks.Task Delete(int id)
         {
-            //try
-            //{
+            try
+            {
                 Income income = db.Incomes.Include(i=>i.User).FirstOrDefault(i => i.Id == id);
 
                 if (income != null && income.User.UserName == User.Identity.Name)
@@ -82,13 +82,13 @@ namespace CCostsProject.Controllers
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
                 return;
-           // }
-            //catch
-            //{
-            //    Response.StatusCode = 400;
-            //    Response.ContentType = "application/json";
-            //    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
-            //}
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+               Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+            }
             }
         ///<summary>Edit an income</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
@@ -97,14 +97,14 @@ namespace CCostsProject.Controllers
         ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpPut]
-        public async System.Threading.Tasks.Task Put(int id, string WorkType, DateTime Date)
+        public async System.Threading.Tasks.Task Put([FromBody] Income income)
         {
             try
             {
-                Income income = db.Incomes.FirstOrDefault(i => i.Id == id);
-                if (income != null && income.User.UserName == User.Identity.Name)
+                Income inc = db.Incomes.Include(i=>i.User).FirstOrDefault(i => i.Id == income.Id);
+                if (inc != null && inc.User.UserName == User.Identity.Name)
                 {
-                    Worker.EditIncome(id, WorkType, Date);
+                    Worker.EditIncome(income);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", income));

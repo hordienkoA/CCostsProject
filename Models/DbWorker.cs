@@ -66,18 +66,18 @@ namespace CConstsProject.Models
         {
             return db.Outgos.Include(i => i.Item).Include(i => i.User).ToList();
         }
-        public void EditOutgo(int id,double Money,DateTime Date,Item item,User user)
+        public void EditOutgo(Outgo outg)
         {
 
-            Outgo outgo = db.Outgos.Include(i=>i.Item).Include(i=>i.User).FirstOrDefault(o => o.Id == id);
+            Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == outg.Id);
             if (outgo != null)
             {
-                outgo.Item.Outgos.Remove(outgo);
-                outgo.Item = item;
-                outgo.Money = Money;
-                outgo.User = user;
-                outgo.Date = Date;
-                outgo.Item.Outgos.Add(outgo);
+                outgo.ItemId = outg.ItemId;
+                outgo.CurrencyId = outg.CurrencyId;
+                outgo.Money = outg.Money;
+                outgo.Date = outg.Date;
+                outgo.Type = outg.Type;
+                outgo.Description = outg.Description;
                
                 db.SaveChanges();
             }
@@ -120,14 +120,18 @@ namespace CConstsProject.Models
                 
             }
         }
-        public void EditIncome(int id,string WorkType,DateTime Date)
+        public void EditIncome(Income inc)
         {
 
-            Income income = db.Incomes.FirstOrDefault(o => o.Id == id);
+            Income income = db.Incomes.FirstOrDefault(i => i.Id == inc.Id);
             if (income != null)
             {
-                income.WorkType = WorkType;
-                income.Date = Date;
+                income.WorkType = inc.WorkType;
+                income.Date = inc.Date;
+                income.Description = inc.Description;
+                income.IncomeType = inc.IncomeType;
+                income.Money = inc.Money;
+                income.CurrencyId = inc.CurrencyId;
                 db.SaveChanges();
             }
         }
@@ -166,12 +170,13 @@ namespace CConstsProject.Models
         }
         public void ClearDb()
         {
-            db.Database.ExecuteSqlCommand("Delete from Items");
-            db.Database.ExecuteSqlCommand("Delete from Incomes");
-            db.Database.ExecuteSqlCommand("Delete from Outgos");
-            db.Database.ExecuteSqlCommand("Delete from Tasks");
-            db.Database.ExecuteSqlCommand("Delete from TaskManagers");
-            db.Database.ExecuteSqlCommand("Delete from Users");
+            db.Database.ExecuteSqlCommand("Delete from Items;DBCC CHECKIDENT('Items', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Incomes;DBCC CHECKIDENT('Incomes', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Outgos;DBCC CHECKIDENT('Outgos', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Tasks;DBCC CHECKIDENT('Tasks', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from TaskManagers;DBCC CHECKIDENT('TaskManagers', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Users;DBCC CHECKIDENT('Users', RESEED, 0)");
+            
             
            
             

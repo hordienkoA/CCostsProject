@@ -16,6 +16,7 @@ namespace CConstsProject.Models
         
         public double AvarageCost { get; set; }
         [Required]
+        
         public string Type { get; set; }
 
         [JsonIgnore]

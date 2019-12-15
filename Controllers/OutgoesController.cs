@@ -55,14 +55,13 @@ namespace CCostsProject.Controllers
         ///<response code="403">if outho with that id not found</response>
         //[Authorize]
         [HttpPut]
-        public async System.Threading.Tasks.Task Put(int id, double Money, DateTime Date)
+        public async System.Threading.Tasks.Task Put([FromBody] Outgo outgo)
         {
-            Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == id);
-            if (outgo != null && outgo.User.UserName == User.Identity.Name)
+            Outgo outg = db.Outgos.Include(o=>o.User).FirstOrDefault(o => o.Id == outgo.Id);
+            if (outg != null && outg.User.UserName == User.Identity.Name)
             {
-                outgo.Money = Money;
-                outgo.Date = Date;
-                db.SaveChanges();
+                Worker.EditOutgo(outgo);
+                
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", outgo));

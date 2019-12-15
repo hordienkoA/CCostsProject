@@ -21,6 +21,12 @@ namespace CCostsProject.Controllers
         {
             db = context;
             worker = new DbWorker(db);
+            if (!db.Items.Any())
+            {
+                db.Items.Add(new Item { Type = "Food", AvarageCost = 1488 });
+                db.Items.Add(new Item { Type = "Games", AvarageCost = 228 });
+                db.SaveChanges();
+            }
         }
         ///<summary>Add an item</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
