@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CCostsProject.Models;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,6 +43,10 @@ namespace CConstsProject.Models
         public List<Outgo> Outgoes { get; set; }
         [JsonIgnore]
         public List<Income> Incomes { get; set; }
+        public int? CurrencyId { get; set; }
+        [JsonIgnore]
+        //[ForeignKey("CurrencyId")]
+        public Currency Currency { get; set; }
         public User()
         {
             Outgoes = new List<Outgo>();

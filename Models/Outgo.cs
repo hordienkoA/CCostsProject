@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CConstsProject.Models
 {
@@ -21,6 +22,9 @@ namespace CConstsProject.Models
         public int? UserId { get; set; }
         [JsonIgnore]
         public User User { get; set; }
-
+        public int? CurrencyId { get; set; }
+        [JsonIgnore]
+        //[ForeignKey("CurrencyId")]
+        public Currency Currency { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace CCostsProject.Controllers
         [HttpDelete]
         public async System.Threading.Tasks.Task Delete(int id)
         {
-            Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == id);
+            Outgo outgo = db.Outgos.Include(o => o.User).FirstOrDefault(o => o.Id == id);
             if (outgo != null && outgo.User.UserName == User.Identity.Name)
             {
                 db.Outgos.Remove(outgo);

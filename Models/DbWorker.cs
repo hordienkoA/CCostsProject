@@ -224,9 +224,21 @@ namespace CConstsProject.Models
         {
             return db.Users.Last();
         }
+        public Currency GetLastCurrency()
+        {
+            return db.Currencies.LastOrDefault();
+        }
         public Family GetFamily(int id)
         {
             return db.Families.FirstOrDefault(f => f.Id == id);
+        }
+        public Currency GetCurrency(int id)
+        {
+            return db.Currencies.FirstOrDefault(c => c.Id == id);
+        }
+        public List<Currency> GetCurrencies()
+        {
+            return db.Currencies.ToList();
         }
         public Family GetFamilyByUserName(string username)
         {
@@ -266,6 +278,42 @@ namespace CConstsProject.Models
             }
             return list;
         }
-        
+
+        public bool AddCurrency(Currency currency)
+        {
+            if (currency != null&&!db.Currencies.Any(c=>c.Name==currency.Name))
+            {
+                db.Currencies.Add(currency);
+                db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+        public bool EditCurrency(int id,string name,out Currency outCurrency)
+        {
+            Currency cur = db.Currencies.Include(i=>i.Incomes).Include(o=>o.Outgoes).Include(u=>u.Users).FirstOrDefault(c=>c.Id==id);
+            if (cur != null)
+            {
+                cur.Name = name;
+                db.SaveChanges();
+                outCurrency = cur;
+                return true;
+            }
+            outCurrency = null;
+            return false;
+        }
+        public bool DeleteCurrency(int id)
+        {
+            Currency cur = db.Currencies.Include(i => i.Incomes).Include(o => o.Outgoes).Include(u => u.Users).FirstOrDefault(c => c.Id == id);
+            if (cur.Incomes.Count == 0 && cur.Users.Count==0 && cur.Outgoes.Count==0)
+            {
+                db.Currencies.Remove(cur);
+                db.SaveChanges();
+                return true;
+            }
+            return false;
+
+        }
+
     }
 }

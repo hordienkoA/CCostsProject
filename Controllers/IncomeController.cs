@@ -7,6 +7,7 @@ using CCostsProject.json_structure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CCostsProject.Controllers
 {
@@ -65,9 +66,9 @@ namespace CCostsProject.Controllers
         [HttpDelete]
         public async System.Threading.Tasks.Task Delete(int id)
         {
-            try
-            {
-                Income income = db.Incomes.FirstOrDefault(i => i.Id == id);
+            //try
+            //{
+                Income income = db.Incomes.Include(i=>i.User).FirstOrDefault(i => i.Id == id);
 
                 if (income != null && income.User.UserName == User.Identity.Name)
                 {
@@ -81,13 +82,13 @@ namespace CCostsProject.Controllers
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
                 return;
-            }
-            catch
-            {
-                Response.StatusCode = 400;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
-            }
+           // }
+            //catch
+            //{
+            //    Response.StatusCode = 400;
+            //    Response.ContentType = "application/json";
+            //    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+            //}
             }
         ///<summary>Edit an income</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
