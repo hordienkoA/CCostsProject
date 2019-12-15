@@ -54,8 +54,8 @@ namespace CCostsProject.Controllers
         ///<response code="200">Returns an outgo that was edited </response>
         ///<response code="403">if outho with that id not found</response>
         //[Authorize]
-        [HttpPatch]
-        public async System.Threading.Tasks.Task Post(int id, double Money, DateTime Date)
+        [HttpPut]
+        public async System.Threading.Tasks.Task Put(int id, double Money, DateTime Date)
         {
             Outgo outgo = db.Outgos.FirstOrDefault(o => o.Id == id);
             if (outgo != null && outgo.User.UserName == User.Identity.Name)

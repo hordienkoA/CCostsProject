@@ -96,8 +96,8 @@ namespace CCostsProject.Controllers
         ///<response code= "401">if the user has not authorized</response>
         ///<response code="403">If user has not permission for this operation or if income with that id not found</response>
         ///<response code="400">"Bad request"</response>
-        [HttpPatch]
-        public async System.Threading.Tasks.Task Patch(int id, string WorkType, DateTime Date)
+        [HttpPut]
+        public async System.Threading.Tasks.Task Put(int id, string WorkType, DateTime Date)
         {
             try
             {

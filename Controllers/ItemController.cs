@@ -151,7 +151,7 @@ namespace CCostsProject.Controllers
         ///<response code="200">Returns new item</response>
         ///<response code="403"> if item  not found</response>
 
-        [HttpPatch]
+        [HttpPut]
         public IActionResult EditItem([FromBody]Item item)
         {
             try

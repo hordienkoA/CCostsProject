@@ -69,8 +69,8 @@ namespace CCostsProject.Controllers
         ///<response code="200">Returns income that was edited</response>
         ///response code= "401">if the user has not authorized</response>
         ///<response code="400">"Bad request"</response>
-        [HttpPatch]
-        public async System.Threading.Tasks.Task Patch(int id,string name)
+        [HttpPut]
+        public async System.Threading.Tasks.Task Put(int id,string name)
         {
             try
             {
