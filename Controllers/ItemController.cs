@@ -168,7 +168,7 @@ namespace CCostsProject.Controllers
                 return Ok(item);
 
             }
-            return Forbid();
+            return BadRequest();
             }
             catch
             {
