@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace CCostsProject.Models
 {
-    public class Currency
+    public class Currency:ITable
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         [JsonIgnore]
         public List<User> Users { get; set; }
@@ -25,5 +26,7 @@ namespace CCostsProject.Models
             Incomes = new List<Income>();
             Outgoes = new List<Outgo>();
         }
+
+        
     }
 }

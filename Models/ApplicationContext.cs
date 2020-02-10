@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FileInfo = CCostsProject.Models.FileInfo;
 
 namespace CConstsProject.Models
 {
@@ -15,9 +17,9 @@ namespace CConstsProject.Models
         public DbSet<Income> Incomes { get; set; }
         public DbSet<Outgo> Outgos { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        
         public DbSet<Currency> Currencies { get; set; }
-        DbSet<TaskManager> TaskManagers { get; set; }
+        public DbSet<FileInfo> FileInfos { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             :base(options)
         {

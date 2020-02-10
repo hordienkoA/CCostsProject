@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.json_structure;
+using CCostsProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,13 @@ namespace CCostsProject.Controllers
     public class IncomeController : Controller
     {
         ApplicationContext db;
-        DbWorker Worker;
-        public IncomeController(ApplicationContext context)
+        IWorker Worker;
+        private ITransactionManager _manager;
+        public IncomeController(ApplicationContext context,ITransactionManager manager)
         {
             db = context;
-            Worker = new DbWorker(db);
+            _manager = manager;
+            Worker = new IncomeWorker(db);
         }
         ///<summary>Add an income</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
@@ -37,11 +40,11 @@ namespace CCostsProject.Controllers
                 if (income != null)
                 {
                     income.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                    Worker.AddIncome(income);
-                    Worker.MakeIncome(User.Identity.Name, income.Money);
+                    Worker.AddEntity(income);
+                    _manager.execute(User.Identity.Name, income.Money);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetLastIncome()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetEntities().Cast<Income>().LastOrDefault()));
                     return;
                 }
                 Response.StatusCode = 400;
@@ -72,7 +75,7 @@ namespace CCostsProject.Controllers
 
                 if (income != null && income.User.UserName == User.Identity.Name)
                 {
-                    Worker.DeleteIncom(id);
+                    Worker.DeleteEntity(income);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
@@ -104,7 +107,7 @@ namespace CCostsProject.Controllers
                 Income inc = db.Incomes.Include(i=>i.User).FirstOrDefault(i => i.Id == income.Id);
                 if (inc != null && inc.User.UserName == User.Identity.Name)
                 {
-                    Worker.EditIncome(income);
+                    Worker.EditEntity(income);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", income));
@@ -136,7 +139,7 @@ namespace CCostsProject.Controllers
             {
                 try
                 {
-                    Income income = Worker.GetIncome(IntegerId);
+                    Income income = (Income)Worker.GetEntity(IntegerId);
                     if (income != null)
                     {
                         Response.StatusCode = 200;
@@ -161,7 +164,7 @@ namespace CCostsProject.Controllers
             {
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetIncomes().Where(u => (u.User.UserName == User.Identity.Name || u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)))));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetEntities().Cast<Income>().Where(u => (u.User.UserName == User.Identity.Name /*|| u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)*/))));
                 return;
                 
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.json_structure;
+using CCostsProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,11 @@ namespace CCostsProject.Controllers
     public class ItemController : Controller
     {
         ApplicationContext db;
-        DbWorker worker;
+        IWorker worker;
         public ItemController(ApplicationContext context)
         {
             db = context;
-            worker = new DbWorker(db);
+            worker = new ItemWorker(db);
             if (!db.Items.Any())
             {
                 db.Items.Add(new Item { Type = "Food", AvarageCost = 1488 });
@@ -48,10 +49,10 @@ namespace CCostsProject.Controllers
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
                     return;
                 }
-                worker.AddItem(item.AvarageCost, item.Type);
+                worker.AddEntity(item);
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetLastItem()));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetEntities().LastOrDefault()));
                 return;
                 
             }
@@ -76,7 +77,7 @@ namespace CCostsProject.Controllers
             {
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetItems()));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetEntities()));
                 return;
               
             }
@@ -136,7 +137,7 @@ namespace CCostsProject.Controllers
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                     return;
                 }
-            worker.DeleteItem(id);
+            worker.DeleteEntity(item);
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
@@ -162,15 +163,8 @@ namespace CCostsProject.Controllers
         {
             try
             {
-                if (item != null)
-            {
-
-                    if (worker.EditItem(item.Id, item.AvarageCost, item.Type)){
-                        return Ok(item);
-                    }
-
-            }
-            return BadRequest();
+                worker.EditEntity(item);
+                return Ok(item);
             }
             catch
             {

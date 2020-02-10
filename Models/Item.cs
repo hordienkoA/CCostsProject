@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using CCostsProject.Models;
 
 namespace CConstsProject.Models
 {
-    public class Item
+    public class Item:ITable
     {
         
         [Key]

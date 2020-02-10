@@ -1,12 +1,15 @@
 ﻿using CCostsProject.Models;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
+using FileInfo = CCostsProject.Models.FileInfo;
 
 namespace CConstsProject.Models
 {
-    public  class Outgo:IMoneySpent
+    public  class Outgo:IMoneySpent,ITable
     {
         [Key]
         public int Id { get; set; }
@@ -26,5 +29,12 @@ namespace CConstsProject.Models
         [JsonIgnore]
         //[ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
+        [JsonIgnore]
+        public List<FileInfo> Files { get; set; }
+
+        public Outgo()
+        {
+            Files=new List<FileInfo>();
+        }
     }
 }

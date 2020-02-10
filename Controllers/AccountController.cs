@@ -29,16 +29,16 @@ namespace CConstsProject.Controllers
     public class AccountController : Controller
     {
         ApplicationContext db;
-        DbWorker Worker;
+        IWorker Worker;
         public AccountController(ApplicationContext context)
         {
             this.db = context;
-            Worker = new DbWorker(db);
+            Worker = new UserWorker(db);
             if (!db.Users.Any())
             {
                 List<User> users = new List<User>
                 {
-                    new User { UserName = "Admin",FullName="Andrii Hordiienko",Email="gord34326@gmail.com", Password = "Admin",Position="Admin",WelcomeString="Hi, Master" }
+                    new User { UserName = "Admin",FirstName= "Johny ",SecondName = "Sins",Email="baldfrombrazzers@pussy.com", Password = "Admin",Position="Admin" }
                 };
                 db.Users.AddRange(users);
                 db.SaveChanges();
@@ -167,21 +167,26 @@ namespace CConstsProject.Controllers
         {
             try
             {
-                
-                    if (Worker.AddUser(user))
-                    {
+
+                try
+                {
+                    Worker.AddEntity(user);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("","Ok","Success", Worker.GetLastUser()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
+                        Worker.GetEntities().Cast<User>().LastOrDefault()));
                     return;
-                    }
-                
-                Response.ContentType = "application/json";
-                Response.StatusCode = 400;
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("email or username", "email or username are not unique", "Error", null)) ;
-                
-                
-               
+                }
+                catch (NullReferenceException)
+                {
+
+                    Response.ContentType = "application/json";
+                    Response.StatusCode = 400;
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("email or username",
+                        "email or username are not unique", "Error", null));
+
+                }
+
 
             }
             catch
@@ -212,7 +217,7 @@ namespace CConstsProject.Controllers
                 {
                     if (Int32.TryParse(id,out IntegerId))
                     {
-                        User user = Worker.GetUser(IntegerId);
+                        User user = (User)Worker.GetEntity(IntegerId);
                         if (user != null)
                         {
                             Response.StatusCode = 200;

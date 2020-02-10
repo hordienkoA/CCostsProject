@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.json_structure;
+using CCostsProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,13 @@ namespace CCostsProject.Controllers
     public class OutgoesController : Controller
     {
         ApplicationContext db;
-        DbWorker Worker;
-        public OutgoesController(ApplicationContext context)
+        IWorker Worker;
+        private ITransactionManager _manager;
+        public OutgoesController(ApplicationContext context,ITransactionManager manager)
         {
             db = context;
-            Worker = new DbWorker(db);
+            Worker = new OutgoWorker(db);
+            _manager = manager;
         }
 
         ///<summary>Add an outgo</summary>
@@ -35,11 +38,11 @@ namespace CCostsProject.Controllers
             if (outgo != null)
             {
                 outgo.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                Worker.AddOutgo(outgo);
-                Worker.MakeOutgo(User.Identity.Name, outgo.Money);
+                Worker.AddEntity(outgo);
+                _manager.undo(User.Identity.Name, outgo.Money);
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetLastOutgo()));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetEntities().LastOrDefault()));
                 return;
                 
             }
@@ -60,7 +63,7 @@ namespace CCostsProject.Controllers
             Outgo outg = db.Outgos.Include(o=>o.User).FirstOrDefault(o => o.Id == outgo.Id);
             if (outg != null && outg.User.UserName == User.Identity.Name)
             {
-                Worker.EditOutgo(outgo);
+                Worker.EditEntity(outgo);
                 
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
@@ -115,7 +118,7 @@ namespace CCostsProject.Controllers
                 if (Int32.TryParse(id, out IntegerId))
                 {
 
-                    Outgo outgo = Worker.GetOutgo(IntegerId);
+                    Outgo outgo = (Outgo)Worker.GetEntity(IntegerId);
                     if (outgo != null)
                     {
                         Response.StatusCode = 200;

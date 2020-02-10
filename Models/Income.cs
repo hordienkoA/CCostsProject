@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CConstsProject.Models
 {
-    public class Income:IMoneySpent
+    public class Income:IMoneySpent,ITable
     {
         [Key]
         public int Id { get; set; }
@@ -18,6 +18,7 @@ namespace CConstsProject.Models
         [Required]
         public double Money { get; set; }
 
+        [Required]
         public string IncomeType { get; set; }
         public string Description { get; set; }
         [Required]
@@ -28,7 +29,15 @@ namespace CConstsProject.Models
         public User User { get; set; }
         public int? CurrencyId { get; set; }
         [JsonIgnore]
-       // [ForeignKey("CurrencyId")]
+       
         public Currency Currency { get; set; }
+        
+        [JsonIgnore]
+        public List<FileInfo> Files { get; set; }
+
+        public Income()
+        {
+            Files=new List<FileInfo>();
+        }
     }
 }

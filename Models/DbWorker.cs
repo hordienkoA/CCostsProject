@@ -1,4 +1,5 @@
-﻿using CCostsProject.Models;
+﻿/*
+using CCostsProject.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -231,27 +232,24 @@ namespace CConstsProject.Models
         {
             return db.Users.Last();
         }
-        public Currency GetLastCurrency()
-        {
-            return db.Currencies.LastOrDefault();
-        }
-        public Family GetFamily(int id)
+        
+        /*public Family GetFamily(int id)
         {
             return db.Families.FirstOrDefault(f => f.Id == id);
-        }
-        public Currency GetCurrency(int id)
+        }#1#
+        /*public Currency GetCurrency(int id)
         {
             return db.Currencies.FirstOrDefault(c => c.Id == id);
-        }
-        public List<Currency> GetCurrencies()
+        }#1#
+        /*public List<Currency> GetCurrencies()
         {
             return db.Currencies.ToList();
-        }
-        public Family GetFamilyByUserName(string username)
+        }#1#
+        /*public Family GetFamilyByUserName(string username)
         {
             User user = db.Users.FirstOrDefault(u => u.UserName == username);
             return db.Families.Include(f => f.Users).FirstOrDefault(f => f.Users.Contains(user));
-        }
+        }#1#
 
         public bool ValidateUser(User user)
         {
@@ -324,3 +322,4 @@ namespace CConstsProject.Models
 
     }
 }
+*/

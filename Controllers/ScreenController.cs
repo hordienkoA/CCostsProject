@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -19,11 +19,13 @@ namespace CCostsProject.Controllers
     {
 
         ApplicationContext db;
-        DbWorker worker;
+        private IWorker IncomeWork;
+        private IWorker OutgoWork;
         public ScreenController(ApplicationContext context)
         {
             db = context;
-            worker = new DbWorker(db);
+            IncomeWork = new IncomeWorker(db);
+            OutgoWork=new OutgoWorker(db);
         }
 
         /////<summary>Get incomes by date range</summary>
@@ -160,4 +162,4 @@ namespace CCostsProject.Controllers
             }
         }
     }
-}
+}*/
