@@ -17,21 +17,26 @@ namespace CCostsProject.Controllers
     public class IncomeController : Controller
     {
         ApplicationContext db;
-        IWorker Worker;
-        private ITransactionManager _manager;
+        private  readonly IWorker  IncomeWork;
+        private readonly IWorker UserWork;
+        private readonly ITransactionManager _manager;
         public IncomeController(ApplicationContext context,ITransactionManager manager)
         {
             db = context;
             _manager = manager;
-            Worker = new IncomeWorker(db);
+            IncomeWork = new IncomeWorker(db);
+            UserWork=new UserWorker(db);
+            
         }
+        
         ///<summary>Add an income</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code= "401">if the user has not authorized</response>
         ///<response code="200">Returns an income that was aded </response>
         ///<response code="403">if request data was incorrect</response>
         ///<response code="400">"Bad request"</response>
-        //[Authorize]
+       
+        
         [HttpPost]
         public async System.Threading.Tasks.Task Post([FromBody] Income income)
         {
@@ -39,18 +44,18 @@ namespace CCostsProject.Controllers
             {
                 if (income != null)
                 {
-                    income.User = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                    Worker.AddEntity(income);
+                    income.User = UserWork.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    IncomeWork.AddEntity(income);
                     _manager.execute(User.Identity.Name, income.Money);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetEntities().Cast<Income>().LastOrDefault()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", IncomeWork.GetEntities().Cast<Income>().LastOrDefault()));
                     return;
                 }
                 Response.StatusCode = 400;
                 Response.ContentType= "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
-                return ;
+                return;
             }
             catch
             {
@@ -60,6 +65,7 @@ namespace CCostsProject.Controllers
                
             }
         }
+        
         ///<summary>Delete an income</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200"></response>
@@ -71,11 +77,11 @@ namespace CCostsProject.Controllers
         {
             try
             {
-                Income income = db.Incomes.Include(i=>i.User).FirstOrDefault(i => i.Id == id);
+                Income income = (Income)IncomeWork.GetEntity(id);
 
                 if (income != null && income.User.UserName == User.Identity.Name)
                 {
-                    Worker.DeleteEntity(income);
+                    IncomeWork.DeleteEntity(income);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
@@ -92,7 +98,8 @@ namespace CCostsProject.Controllers
                Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
-            }
+        }
+        
         ///<summary>Edit an income</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200">Returns income that was edited</response>
@@ -104,10 +111,10 @@ namespace CCostsProject.Controllers
         {
             try
             {
-                Income inc = db.Incomes.Include(i=>i.User).FirstOrDefault(i => i.Id == income.Id);
+                Income inc = (Income)IncomeWork.GetEntity(income.Id);
                 if (inc != null && inc.User.UserName == User.Identity.Name)
                 {
-                    Worker.EditEntity(income);
+                    IncomeWork.EditEntity(income);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", income));
@@ -115,7 +122,7 @@ namespace CCostsProject.Controllers
                 }
                 Response.StatusCode = 403;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error", null));
                 return;
             }
             catch
@@ -125,6 +132,7 @@ namespace CCostsProject.Controllers
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
         }
+        
         ///<summary>Get an income or  incomes </summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200">Returns income</response>
@@ -139,7 +147,7 @@ namespace CCostsProject.Controllers
             {
                 try
                 {
-                    Income income = (Income)Worker.GetEntity(IntegerId);
+                    Income income = (Income)IncomeWork.GetEntity(IntegerId);
                     if (income != null)
                     {
                         Response.StatusCode = 200;
@@ -164,7 +172,7 @@ namespace CCostsProject.Controllers
             {
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetEntities().Cast<Income>().Where(u => (u.User.UserName == User.Identity.Name /*|| u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)*/))));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", IncomeWork.GetEntities().Cast<Income>().Where(u => (u.User.UserName == User.Identity.Name /*|| u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)*/))));
                 return;
                 
             }

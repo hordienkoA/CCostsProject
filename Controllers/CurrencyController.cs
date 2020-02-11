@@ -13,21 +13,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace CCostsProject.Controllers
 {
     [Route("api/currencies")]
-    //[Authorize(AuthenticationSchemes = "Bearer")]
+    
     public class CurrencyController : Controller
     {
         ApplicationContext db;
         IWorker Worker;
-        public CurrencyController(ApplicationContext context)
+        public CurrencyController(ApplicationContext context,IInitializer init)
         {
             db = context;
             Worker = new CurrencyWorker(db);
-            if (!db.Currencies.Any())
-            {
-                db.Currencies.Add(new Currency() { Name = "USD" });
-                db.Currencies.Add(new Currency() { Name = "UAH" });
-                db.SaveChanges();
-            }
+            init.CheckAndInitialize();
         }
        
 
@@ -39,6 +34,7 @@ namespace CCostsProject.Controllers
         ///<response code= "401">if the user has not authorized</response>
         
         ///<response code="400">"Bad request"</response>
+        
         [HttpGet]
         public async System.Threading.Tasks.Task Get()
         {

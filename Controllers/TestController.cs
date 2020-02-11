@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using CConstsProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +20,7 @@ namespace CCostsProject.Controllers
             db = context;
             worker = new DbWorker(db);
         }
-        [Authorize]
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok($"Your login is : {User.Identity.Name}");
-        }
+      
         [HttpDelete("ClearDb")]
         public IActionResult Delete()
         {
@@ -34,4 +29,4 @@ namespace CCostsProject.Controllers
         }
     }
 }
-*/
+

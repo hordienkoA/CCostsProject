@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using CCostsProject.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,13 +14,16 @@ namespace CConstsProject.Models
         ApplicationContext db;
         List<String> listOfEntities;
         Regex emailValidator;
+
         public DbWorker(ApplicationContext context)
         {
             db = context;
-             listOfEntities = new List<string> { "Families", "Incomes", "Items", "Outgos", "TaskManagers", "Tasks", "Users" };
-          emailValidator = new Regex(@"[A - Za - z0 - 9._ % +-] +@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}");
+            listOfEntities = new List<string>
+                {"Families", "Incomes", "Items", "Outgos", "TaskManagers", "Tasks", "Users"};
+            emailValidator = new Regex(@"[A - Za - z0 - 9._ % +-] +@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}");
         }
-        public double? MakeIncome(string  username,double money)
+
+        /*public double? MakeIncome(string  username,double money)
         {
             User user = db.Users.FirstOrDefault(u => u.UserName == username);
             if (user != null)
@@ -170,156 +173,67 @@ namespace CConstsProject.Models
                 task.False_rule = False_rule;
                 db.SaveChanges();
             }
-        }
+        }*/
         public void ClearDb()
         {
             db.Database.ExecuteSqlCommand("Delete from Items;DBCC CHECKIDENT('Items', RESEED, 0)");
             db.Database.ExecuteSqlCommand("Delete from Incomes;DBCC CHECKIDENT('Incomes', RESEED, 0)");
             db.Database.ExecuteSqlCommand("Delete from Outgos;DBCC CHECKIDENT('Outgos', RESEED, 0)");
-            db.Database.ExecuteSqlCommand("Delete from Tasks;DBCC CHECKIDENT('Tasks', RESEED, 0)");
-            db.Database.ExecuteSqlCommand("Delete from TaskManagers;DBCC CHECKIDENT('TaskManagers', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Outgos;DBCC CHECKIDENT('Families', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Outgos;DBCC CHECKIDENT('FileInfos', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Outgos;DBCC CHECKIDENT('Currencies', RESEED, 0)");
             db.Database.ExecuteSqlCommand("Delete from Users;DBCC CHECKIDENT('Users', RESEED, 0)");
-            
-            
-           
-            
-            
+
+
 
         }
-        public bool AddUser(User user)
-        {
-            if (db.Users.Any(u => u.Email == user.Email || u.UserName == user.UserName))
-            {
-                return false;
-            }
-            //else if (ValidateUser(user))
-            //{
-            //    return false;
-            //}
-            db.Users.Add(user);
-            db.SaveChanges();
-            return true;
-        }
-        public User GetUser(int? id)
-        {
-            return db.Users.FirstOrDefault(u => u.Id == id);
-        }
-
-        public Outgo GetOutgo(int? id)
-        {
-            return db.Outgos.FirstOrDefault(o => o.Id == id);
-        }
-
-        public Income GetIncome(int? id)
-        {
-            return db.Incomes.FirstOrDefault(i => i.Id == id);
-        }
-        public  Income GetLastIncome()
-        {
-             return  db.Incomes.Last();
-        }
-
-        public Outgo GetLastOutgo()
-        {
-            return db.Outgos.Last();
-        }
-        
-        public Item GetLastItem()
-        {
-            return db.Items.Last();
-        }
-        public User GetLastUser()
-        {
-            return db.Users.Last();
-        }
-        
-        /*public Family GetFamily(int id)
-        {
-            return db.Families.FirstOrDefault(f => f.Id == id);
-        }#1#
-        /*public Currency GetCurrency(int id)
-        {
-            return db.Currencies.FirstOrDefault(c => c.Id == id);
-        }#1#
-        /*public List<Currency> GetCurrencies()
-        {
-            return db.Currencies.ToList();
-        }#1#
-        /*public Family GetFamilyByUserName(string username)
-        {
-            User user = db.Users.FirstOrDefault(u => u.UserName == username);
-            return db.Families.Include(f => f.Users).FirstOrDefault(f => f.Users.Contains(user));
-        }#1#
-
-        public bool ValidateUser(User user)
-        {
-
-            return user.Email.Length < 3 || user.Email.Length > 64 ||user.Password.Length<8
-                ||user.Password.Length>255||user.UserName.Length<3||user.UserName.Length>64||user.FullName.Length<1||user.FullName.Length>255;
-        }
-
-        public List<Income> GetIncomesByDateRange(DateTime fromDate,DateTime? toDate)
-        {
-            return toDate == null ? db.Incomes.Include(i => i.User).Where(i => i.Date > fromDate && i.Date < DateTime.Now).ToList<Income>() : db.Incomes.Where(i => i.Date > fromDate && i.Date < toDate).ToList<Income>();
-        }
-
-        public List<Outgo> GetOutgoesByDataRange(DateTime fromDate,DateTime? toDate)
-        {
-            return toDate == null ? db.Outgos.Include(o => o.User).Where(o => o.Date > fromDate && o.Date < DateTime.Now).ToList<Outgo>() : db.Outgos.Where(o => o.Date > fromDate && o.Date < toDate).ToList<Outgo>();
-        }
-
-        public List<IMoneySpent> GetOuthoesAndIncomesByDateRange(DateTime fromDate,DateTime? toDate)
-        {
-            List<IMoneySpent> list = new List<IMoneySpent>();
-            if (toDate == null)
-            {
-                list.AddRange(db.Incomes.Include(i => i.User).Where(i => i.Date > fromDate && i.Date < DateTime.Now));
-                list.AddRange(db.Outgos.Include(o => o.User).Where(o => o.Date > fromDate && o.Date < DateTime.Now));
-            }
-            else
-            {
-                list.AddRange(db.Incomes.Include(i=>i.User).Where(i => i.Date > fromDate && i.Date < toDate));
-                list.AddRange(db.Outgos.Include(o => o.User).Where(o => o.Date > fromDate && o.Date < toDate));
-            }
-            return list;
-        }
-
-        public bool AddCurrency(Currency currency)
-        {
-            if (currency != null&&!db.Currencies.Any(c=>c.Name==currency.Name))
-            {
-                db.Currencies.Add(currency);
-                db.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public bool EditCurrency(int id,string name,out Currency outCurrency)
-        {
-            Currency cur = db.Currencies.Include(i=>i.Incomes).Include(o=>o.Outgoes).Include(u=>u.Users).FirstOrDefault(c=>c.Id==id);
-            if (cur != null)
-            {
-                cur.Name = name;
-                db.SaveChanges();
-                outCurrency = cur;
-                return true;
-            }
-            outCurrency = null;
-            return false;
-        }
-        public bool DeleteCurrency(int id)
-        {
-            Currency cur = db.Currencies.Include(i => i.Incomes).Include(o => o.Outgoes).Include(u => u.Users).FirstOrDefault(c => c.Id == id);
-            if (cur.Incomes.Count == 0 && cur.Users.Count==0 && cur.Outgoes.Count==0)
-            {
-                db.Currencies.Remove(cur);
-                db.SaveChanges();
-                return true;
-            }
-            return false;
-
-        }
-
     }
 }
+/*public bool AddUser(User user)
+{
+    if (db.Users.Any(u => u.Email == user.Email || u.UserName == user.UserName))
+    {
+        return false;
+    }
+    //else if (ValidateUser(user))
+    //{
+    //    return false;
+    //}
+    db.Users.Add(user);
+    db.SaveChanges();
+    return true;
+}
+public User GetUser(int? id)
+{
+    return db.Users.FirstOrDefault(u => u.Id == id);
+}
+
+public Outgo GetOutgo(int? id)
+{
+    return db.Outgos.FirstOrDefault(o => o.Id == id);
+}
+
+public Income GetIncome(int? id)
+{
+    return db.Incomes.FirstOrDefault(i => i.Id == id);
+}
+public  Income GetLastIncome()
+{
+     return  db.Incomes.Last();
+}
+
+public Outgo GetLastOutgo()
+{
+    return db.Outgos.Last();
+}
+
+public Item GetLastItem()
+{
+    return db.Items.Last();
+}
+public User GetLastUser()
+{
+    return db.Users.Last();
+}
 */
+        

@@ -11,24 +11,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CCostsProject.Controllers
 {
-    //[Authorize]
+    
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/items")]
     public class ItemController : Controller
     {
         ApplicationContext db;
         IWorker worker;
-        public ItemController(ApplicationContext context)
+        public ItemController(ApplicationContext context,IInitializer init)
         {
             db = context;
             worker = new ItemWorker(db);
-            if (!db.Items.Any())
-            {
-                db.Items.Add(new Item { Type = "Food", AvarageCost = 1488 });
-                db.Items.Add(new Item { Type = "Games", AvarageCost = 228 });
-                db.SaveChanges();
-            }
+            init.CheckAndInitialize();
         }
+        
         ///<summary>Add an item</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="401">if the user has not authorized</response>
@@ -46,7 +42,7 @@ namespace CCostsProject.Controllers
                 {
                     Response.StatusCode = 403;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbbiden", "Error", null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error", null));
                     return;
                 }
                 worker.AddEntity(item);
@@ -72,7 +68,6 @@ namespace CCostsProject.Controllers
         [HttpGet("/api/items")]
         public async System.Threading.Tasks.Task Get([FromHeader] string id)
         {
-            int IntegerId;
             if (id == null)
             {
                 Response.StatusCode = 200;
@@ -81,11 +76,12 @@ namespace CCostsProject.Controllers
                 return;
               
             }
-            else if(Int32.TryParse(id, out IntegerId))
+
+            if(Int32.TryParse(id, out var integerId))
             {
                 try
                 {
-                    Item item = db.Items.FirstOrDefault(i => i.Id == IntegerId);
+                    Item item = worker.GetEntities().Cast<Item>().FirstOrDefault(i => i.Id == integerId);
                     if (item == null)
                     {
                         Response.StatusCode = 404;
@@ -112,9 +108,9 @@ namespace CCostsProject.Controllers
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
             }
-            
-            
-          }
+
+
+        }
 
 
         ///<summary>Delete an item</summary>
@@ -129,7 +125,7 @@ namespace CCostsProject.Controllers
         {
             try
             {
-                Item item = db.Items.FirstOrDefault(i => i.Id == id);
+                Item item = worker.GetEntities().Cast<Item>().FirstOrDefault(i => i.Id == id);
             if (item == null)
             {
                     Response.StatusCode = 400;
@@ -137,7 +133,7 @@ namespace CCostsProject.Controllers
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
                     return;
                 }
-            worker.DeleteEntity(item);
+                worker.DeleteEntity(item);
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));

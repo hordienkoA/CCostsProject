@@ -30,75 +30,22 @@ namespace CConstsProject.Controllers
     {
         ApplicationContext db;
         IWorker Worker;
-        public AccountController(ApplicationContext context)
+        public AccountController(ApplicationContext context, IInitializer init)
         {
             this.db = context;
             Worker = new UserWorker(db);
-            if (!db.Users.Any())
-            {
-                List<User> users = new List<User>
-                {
-                    new User { UserName = "Admin",FirstName= "Johny ",SecondName = "Sins",Email="baldfrombrazzers@pussy.com", Password = "Admin",Position="Admin" }
-                };
-                db.Users.AddRange(users);
-                db.SaveChanges();
-            }
+            init.CheckAndInitialize();
 
         }
+        
         /// <summary>
         /// Authentication by JWT
         /// </summary>
-
-
-        ///<response code="200">Returns an autherization token </response>
-        ///<response code="400">Invalid username or password or incorect request data</response>
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async System.Threading.Tasks.Task Token()
-        {
-            try
-            {
-                var username = Request.Form["username"];
-                var password = Request.Form["password"];
-                var identity = GetIdentity(username, password);
-                if (identity == null)
-                {
-                    Response.StatusCode = 400;
-                    await Response.WriteAsync("Invalid username or password");
-                    return;
-                }
-                var now = DateTime.UtcNow;
-                var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                        audience: AuthOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: identity.Claims,
-                        expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                        signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-                var response = new
-                {
-                    access_token = encodedJwt,
-                    username = identity.Name
-                };
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
-            }
-            catch
-            {
-                Response.StatusCode = 400;
-                await Response.WriteAsync("Bad request");
-            }
-        }
-        /// <summary>
-        /// Authentication by JWT
-        /// </summary>
-      
         ///<response code="200">Returns an autherization token </response>
         ///<response code="401">Returns Invalid username or password or incorect request data</response>
         [Produces("application/json")]
         [AllowAnonymous]
-        [HttpPost("jsonLogin")]
+        [HttpPost("login")]
         public async System.Threading.Tasks.Task Token([FromBody] LoginViewModel value)
         {
 
@@ -206,18 +153,18 @@ namespace CConstsProject.Controllers
         ///<response code="403">if auth username!=Admin</response>
         ///<response code="401">if the user has not authorized</response>
         ///<response code="404">if user with that id not found </response>
+        
         [HttpGet]
         public async System.Threading.Tasks.Task Get([FromHeader] string id)
         {
-            int IntegerId;
             try
             {
 
-            if (User.Identity.Name.Trim() == "Admin")
+                if (User.Identity.Name.Trim() == "Admin")
                 {
-                    if (Int32.TryParse(id,out IntegerId))
+                    if (Int32.TryParse(id,out var integerId))
                     {
-                        User user = (User)Worker.GetEntity(IntegerId);
+                        User user = (User)Worker.GetEntity(integerId);
                         if (user != null)
                         {
                             Response.StatusCode = 200;
@@ -229,12 +176,12 @@ namespace CConstsProject.Controllers
                         Response.StatusCode = 404;
                         Response.ContentType = "application/json";
                         await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error",null));
-                        return;
+                       
 
                     }
 
                
-                else if(id==null)
+                    else if(id==null)
                     {
                         Response.StatusCode = 200;
                         Response.ContentType = "application/json";
@@ -242,14 +189,13 @@ namespace CConstsProject.Controllers
                         return;
                        
                     }
-                else
-                {
-                    Response.StatusCode = 400;
-                    Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                    else
+                    {
+                        Response.StatusCode = 400;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                    }
                 }
-
-            }
                 else
                 {
                     Response.StatusCode = 403;
@@ -265,6 +211,6 @@ namespace CConstsProject.Controllers
                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
                 
             }
-            }
+        }
     }
 }
