@@ -97,7 +97,7 @@ namespace CConstsProject
                 {
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
-            services.AddScoped<ITransactionManager, CashManager>();
+            
             services.AddScoped<IInitializer, Initializer>();
             services.AddMvc().AddJsonOptions(
                 options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

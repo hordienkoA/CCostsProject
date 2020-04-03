@@ -17,14 +17,13 @@ namespace CCostsProject.Models
         [JsonIgnore]
         public List<User> Users { get; set; }
         [JsonIgnore]
-        public List<Income> Incomes { get; set; }
-        [JsonIgnore]
-        public List<Outgo> Outgoes { get; set; }
+        public List<Transaction> Transactions { get; set; }
+        
         public Currency()
         {
             Users = new List<User>();
-            Incomes = new List<Income>();
-            Outgoes = new List<Outgo>();
+            Transactions = new List<Transaction>();
+            
         }
 
         

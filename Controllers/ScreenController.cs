@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -86,7 +86,7 @@ namespace CCostsProject.Controllers
                    Response.ContentType = "application/json";
                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list));
                    return;
-               }*/
+               }#1#
                 if(trimedType=="")
                 {
 
@@ -113,4 +113,4 @@ namespace CCostsProject.Controllers
             }
         }
     }
-}
+}*/

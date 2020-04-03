@@ -21,10 +21,10 @@ namespace CConstsProject.Models
         public string Type { get; set; }
 
         [JsonIgnore]
-        public List<Outgo> Outgos { get; set; }
+        public List<Transaction> Transactions { get; set; }
         public Item()
         {
-            Outgos = new List<Outgo>();
+            Transactions = new List<Transaction>();
         }
     }
 }

@@ -16,15 +16,15 @@ namespace CCostsProject.Models
         public ITable GetEntity(int? id)
         {
             return id == null ? db.Items
-                .Include(i => i.Outgos).FirstOrDefault() 
+                .Include(i => i.Transactions).FirstOrDefault() 
                 : db.Items
-                    .Include(i => i.Outgos)
+                    .Include(i => i.Transactions)
                     .FirstOrDefault(i => i.Id == id);
         }
 
         public List<ITable> GetEntities()
         {
-            return db.Items.Include(i => i.Outgos).ToList<ITable>();
+            return db.Items.Include(i => i.Transactions).ToList<ITable>();
         }
 
         public void AddEntity(ITable entity)

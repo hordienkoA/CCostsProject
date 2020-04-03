@@ -41,9 +41,8 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public Family Family { get; set; }
         [JsonIgnore]
-        public List<Outgo> Outgoes { get; set; }
-        [JsonIgnore]
-        public List<Income> Incomes { get; set; }
+        public List<Transaction> Transactions { get; set; }
+        
         
         public int? CurrencyId { get; set; }
         [JsonIgnore]
@@ -56,8 +55,7 @@ namespace CConstsProject.Models
         
         public User()
         {
-            Outgoes = new List<Outgo>();
-            Incomes = new List<Income>();
+            
         }
     }
 }

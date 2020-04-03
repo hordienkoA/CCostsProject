@@ -11,10 +11,9 @@ namespace CCostsProject.Models
         [Required]
         public string Path { get; set; }
         
-        public int? OutgoId { get; set; }
-        public Outgo Outgo { get; set; }
-        public int? IncomeId { get; set; }
-        public Income Income { get; set; }
+        
+        public int? TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
         
         public int? UserId { get; set; }
         public User User { get; set; }

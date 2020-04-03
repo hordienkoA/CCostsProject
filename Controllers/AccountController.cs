@@ -185,7 +185,7 @@ namespace CConstsProject.Controllers
                     {
                         Response.StatusCode = 200;
                         Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson("",  "Ok","Success", db.Users.ToList()));
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("",  "Ok","Success", db.Users.Cast<ITable>().ToList()));
                         return;
                        
                     }
