@@ -24,11 +24,11 @@ namespace CConstsProject.Models
        
         
         public string Password { get; set; }
-        [Required]
+        
         
         public string FirstName { get; set; }
         
-        [Required]
+        
         public string SecondName { get; set; }
         
         [JsonIgnore]
