@@ -54,7 +54,7 @@ namespace CCostsProject.Controllers
                         DateTime.Today.AddMonths(-6) : trimedPeriod == "lastYear" ? DateTime.Today.AddYears(-1) : DateTime.Today.AddYears(-60), DateTime.Now);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(i => i.User.UserName == User.Identity.Name).ToList()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(i => i.User.UserName == User.Identity.Name).Cast<ITable>().ToList()));
                     return;
                 }
 
@@ -65,7 +65,7 @@ namespace CCostsProject.Controllers
                             DateTime.Today.AddMonths(-6) : trimedPeriod == "lastYear" ? DateTime.Today.AddYears(-1) : DateTime.Today.AddYears(-60), DateTime.Now);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(o => o.User.UserName == User.Identity.Name).ToList()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(o => o.User.UserName == User.Identity.Name).Cast<ITable>().ToList()));
                     return;
                 }
 
@@ -76,7 +76,7 @@ namespace CCostsProject.Controllers
                             DateTime.Today.AddMonths(-6) : trimedPeriod == "lastYear" ? DateTime.Today.AddYears(-1) : DateTime.Today.AddYears(-60), DateTime.Now);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(m => m.User.UserName == User.Identity.Name)));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", list.Where(m => m.User.UserName == User.Identity.Name).Cast<ITable>().ToList()));
                     return;
                 }
                 /*if (trimedType == "item")

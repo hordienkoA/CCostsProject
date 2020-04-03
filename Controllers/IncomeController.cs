@@ -172,7 +172,7 @@ namespace CCostsProject.Controllers
             {
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", IncomeWork.GetEntities().Cast<Income>().Where(u => (u.User.UserName == User.Identity.Name /*|| u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)*/))));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", IncomeWork.GetEntities().Cast<Income>().Where(u => (u.User.UserName == User.Identity.Name /*|| u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)*/)).Cast<ITable>().ToList()));
                 return;
                 
             }

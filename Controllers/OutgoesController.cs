@@ -138,7 +138,7 @@ namespace CCostsProject.Controllers
                 {
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", OutgoWork.GetEntities().Cast<Outgo>().Where(o => o.User.UserName == User.Identity.Name).ToList()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", OutgoWork.GetEntities().Cast<Outgo>().Where(o => o.User.UserName == User.Identity.Name).Cast<ITable>().ToList()));
                     return;
                 }
 
