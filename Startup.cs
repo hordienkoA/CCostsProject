@@ -115,7 +115,7 @@ namespace CConstsProject
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "CC API v1");
 
             });
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             
             // app.UseCookiePolicy();
             app.UseAuthentication();
