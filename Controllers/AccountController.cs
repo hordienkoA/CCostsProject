@@ -30,10 +30,12 @@ namespace CConstsProject.Controllers
     {
         ApplicationContext db;
         IWorker Worker;
+        IWorker FamilyWork;
         public AccountController(ApplicationContext context, IInitializer init)
         {
             this.db = context;
             Worker = new UserWorker(db);
+            FamilyWork=new FamilyWorker(db);
             init.CheckAndInitialize();
 
         }
@@ -211,6 +213,36 @@ namespace CConstsProject.Controllers
                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
                 
             }
+        }
+        
+        [HttpPatch("leave-family")]
+        public async Task LeaveFamily()
+        {
+            
+            var user = Worker.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == HttpContext.User.Identity.Name);
+            if (user.Family == null)
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error",null));
+                return;
+            }
+
+            var family = user.FamilyId;
+            user.FamilyId = null;
+            
+            Worker.EditEntity(user);
+            
+            if (((Family) FamilyWork.GetEntity(family)).Users.Count == 0)
+            {
+                FamilyWork.DeleteEntity(FamilyWork.GetEntity(family));
+            }
+            Response.StatusCode = 200;
+            Response.ContentType = "application/json";
+            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok","Success" ,null));
+            
+            
+
         }
     }
 }

@@ -33,36 +33,30 @@ namespace CCostsProject.Controllers
         [HttpGet]
         public async Task Get([FromHeader] string id)
         {
+            
             int IntegerId;
+            try
+            {
             if (int.TryParse(id, out IntegerId))
             {
-                try
-                {
-                    Transaction transaction = (Transaction) transactionWork.GetEntity(IntegerId);
-                    if (transaction != null)
-                    {
+                
+                    var currentUser = userWork.GetEntities().Cast<User>()
+                        .FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    Transaction transaction = (Transaction) transactionWork.GetEntity(IntegerId); 
+                    
                         Response.ContentType = "application/json";
 
-                        Response.StatusCode = 200;
+                        Response.StatusCode =transaction!=null?transaction.User.Family!=null?(transaction.User.UserName==User.Identity.Name||
+                                             transaction.User.Family.Users.Contains(currentUser))?200:404:transaction.User.UserName==User.Identity.Name?200:404:404;
 
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", transaction));
-                        return;
-                    }
-                    Response.ContentType = "application/json";
-
-                    Response.StatusCode = 404;
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null));
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", Response.StatusCode==200?"Ok":"Not found", 
+                            Response.StatusCode==200?"Success":"Error", 
+                            Response.StatusCode==200 ?transaction:null));
+                        
+                    
 
 
-                }
-                catch
-                {
-                    Response.ContentType = "application/json";
-
-                    Response.StatusCode = 400;
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
-
-                }
+               
             }
             else if (id == null)
             {
@@ -72,15 +66,21 @@ namespace CCostsProject.Controllers
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
                     transactionWork.GetEntities().Cast<Transaction>().Where(u =>
                             (u.User.UserName ==
-                             User.Identity.Name /*|| u.User.Family == Worker.GetFamilyByUserName(User.Identity.Name)*/))
+                             User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false)))
                         .Cast<ITable>().ToList()));
 
             }
-            else
+            
+            }
+            catch
             {
+                Response.ContentType = "application/json";
+
                 Response.StatusCode = 400;
                 await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+
             }
+           
         }
 
         ///<summary>Add a transaction</summary>

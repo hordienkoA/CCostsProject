@@ -19,11 +19,15 @@ namespace CCostsProject.Models
             return id == null ? db.Transactions.Include(t => t.Item)
                     .Include(t => t.Files)
                     .Include(t => t.User)
+                    .ThenInclude(u=>u.Family)
+                    .ThenInclude(f=>f.Users)
                     .Include(t=>t.Currency)
                     .FirstOrDefault() 
                 : db.Transactions.Include(o => o.Item)
                     .Include(t => t.Files)
                     .Include(t => t.User)
+                    .ThenInclude(u=>u.Family)
+                    .ThenInclude(f=>f.Users)
                     .Include(t=>t.Currency)
                     .FirstOrDefault(t => t.Id == id);
         }
@@ -33,6 +37,8 @@ namespace CCostsProject.Models
             return db.Transactions.Include(t => t.Item)
                 .Include(t => t.Files)
                 .Include(t => t.User)
+                .ThenInclude(u=>u.Family)
+                .ThenInclude(f=>f.Users)
                 .Include(t=>t.Currency).ToList<ITable>();
         }
 

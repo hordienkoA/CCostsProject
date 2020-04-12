@@ -14,6 +14,7 @@ namespace CConstsProject.Models
         public string Name{ get; set; }
         public string AdditionalInfo { get; set; }
         
+        
         [JsonIgnore]
         public List<User> Users { get; set; }
         public Family()

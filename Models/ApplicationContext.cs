@@ -30,7 +30,8 @@ namespace CConstsProject.Models
         {
             /*modelBuilder.Entity<Outgo>().HasOne(o => o.User).WithMany(u => u.Outgoes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Income>().HasOne(i => i.User).WithMany(u => u.Incomes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);*/
-            modelBuilder.Entity<User>().HasOne(u => u.Family).WithMany(f => f.Users).HasForeignKey(u=>u.FamilyId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasOne(u => u.Family).WithMany(f => f.Users).HasForeignKey(u=>u.FamilyId).OnDelete(DeleteBehavior.SetNull);
+            
             /*
             modelBuilder.Entity<Outgo>().HasOne(o => o.Item).WithMany(i => i.Outgos).HasForeignKey(o=>o.ItemId).OnDelete(DeleteBehavior.Cascade);
             */

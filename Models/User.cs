@@ -44,6 +44,7 @@ namespace CConstsProject.Models
         public List<Transaction> Transactions { get; set; }
         
         
+        
         public int? CurrencyId { get; set; }
         [JsonIgnore]
         public Currency Currency { get; set; }

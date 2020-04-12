@@ -15,7 +15,7 @@ namespace CCostsProject.Models
         }
         public ITable GetEntity(int? id)
         {
-            return id==null? db.Families.FirstOrDefault():db.Families.FirstOrDefault(f => f.Id == id);
+            return id==null? db.Families.Include(f=>f.Users).FirstOrDefault():db.Families.Include(f=>f.Users).FirstOrDefault(f => f.Id == id);
         }
 
         public List<ITable> GetEntities()
@@ -62,7 +62,14 @@ namespace CCostsProject.Models
 
         public void DeleteEntity(ITable entity)
         {
+            
             db.Families.Remove(entity as Family ?? throw new NullReferenceException());
+            db.SaveChanges();
+        }
+        public void AddUser(int familyId, int userId)
+        {
+            var family = db.Families.FirstOrDefault(f => f.Id == familyId);
+            family.Users.Add(db.Users.FirstOrDefault(u=>u.Id==userId));
             db.SaveChanges();
         }
     }
