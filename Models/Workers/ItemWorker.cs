@@ -39,12 +39,16 @@ namespace CCostsProject.Models
         public void EditEntity(ITable entity)
         {
             var newItem = entity as Item;
+            
+            
             if (newItem != null)
             {
                 var item = db.Items.FirstOrDefault(i => i.Id == entity.Id);
 
-                item.Type = newItem.Type;
-                item.AvarageCost = newItem.AvarageCost;
+                item.Name = newItem.Name;
+                
+                
+                
                 db.SaveChanges();
             }
         }
@@ -53,6 +57,32 @@ namespace CCostsProject.Models
         {
             db.Items.Remove(entity as Item ?? throw new NullReferenceException());
             db.SaveChanges();
+        }
+
+        public void IncreaseItemData(ITable entity,double money)
+        {
+            var newItem = entity as Item;
+            int itemsOutgoSum=0;
+            if (newItem != null)
+            {
+                var item = db.Items.FirstOrDefault(i => i.Id == entity.Id);
+                item.AmountOfOutgoes++;
+                foreach (var VARIABLE in db.Items)
+                {
+                    itemsOutgoSum += VARIABLE.AmountOfOutgoes;
+                }
+
+                foreach (var i in db.Items)
+                {
+                    i.Percent = (int)(((double)i.AmountOfOutgoes/(double)itemsOutgoSum)*100);
+
+                }
+
+                
+
+                item.AmountOfMoney += money;
+                db.SaveChanges();
+            }
         }
     }
 }

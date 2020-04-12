@@ -34,8 +34,8 @@ namespace CCostsProject.Models
             }
             if (!db.Items.Any())
             {
-                db.Items.Add(new Item { Type = "Food", AvarageCost = 1488 });
-                db.Items.Add(new Item { Type = "Games", AvarageCost = 228 });
+                db.Items.Add(new Item { Name = "Food",CurrencyId = 1});
+                db.Items.Add(new Item { Name = "Games",CurrencyId = 1,});
                 
             }
 

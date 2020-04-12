@@ -14,11 +14,16 @@ namespace CConstsProject.Models
         [Key]
         
         public int Id { get; set; }
-        
-        public double AvarageCost { get; set; }
         [Required]
+        public string Name { get; set; }
+        public int Percent { get; set; }
+        public int AmountOfOutgoes { get; set; }
+        [Required]
+        public int? CurrencyId { get; set; }
+        [JsonIgnore]
+        public Currency Currency { get; set; }
+        public double AmountOfMoney { get; set; }
         
-        public string Type { get; set; }
 
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }

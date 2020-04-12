@@ -16,12 +16,14 @@ namespace CCostsProject.Controllers
         private ApplicationContext db;
         private readonly IWorker transactionWork;
         private readonly IWorker userWork;
+        private readonly IWorker itemWork;
 
         public TransactionController(ApplicationContext context)
         {
             db = context;
             transactionWork = new TransactionWorker(db);
             userWork = new UserWorker(db);
+            itemWork=new ItemWorker(db);
         }
 
         ///<summary>Get an income or  incomes </summary>
@@ -96,6 +98,10 @@ namespace CCostsProject.Controllers
             {
 
 
+                if (transaction.ItemId != null)
+                {
+                    ((ItemWorker)itemWork).IncreaseItemData(itemWork.GetEntity(transaction.ItemId),transaction.Money);
+                }
                 transaction.User = userWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == User.Identity.Name);
                 transaction.User.CashSum += transaction.Money;
