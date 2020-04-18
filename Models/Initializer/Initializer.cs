@@ -32,12 +32,12 @@ namespace CCostsProject.Models
                 db.Currencies.Add(new Currency() { Name = "UAH" });
                
             }
-            if (!db.Items.Any())
+            /*if (!db.Items.Any())
             {
                 db.Items.Add(new Item { Name = "Food",CurrencyId = 1});
                 db.Items.Add(new Item { Name = "Games",CurrencyId = 1,});
                 
-            }
+            }*/
 
             db.SaveChangesAsync();
         }
