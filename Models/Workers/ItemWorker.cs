@@ -59,14 +59,14 @@ namespace CCostsProject.Models
             db.SaveChanges();
         }
 
-        public void IncreaseItemData(ITable entity,double money)
+        public void ManageItemData(ITable entity,double money,bool inc)
         {
             var newItem = entity as Item;
             int itemsOutgoSum=0;
             if (newItem != null)
             {
                 var item = db.Items.FirstOrDefault(i => i.Id == entity.Id);
-                item.AmountOfOutgoes++;
+                item.AmountOfOutgoes=inc?item.AmountOfOutgoes+1:item.AmountOfOutgoes-1;
                 foreach (var VARIABLE in db.Items)
                 {
                     itemsOutgoSum += VARIABLE.AmountOfOutgoes;
@@ -79,8 +79,7 @@ namespace CCostsProject.Models
                 }
 
                 
-
-                item.AmountOfMoney += money;
+                item.AmountOfMoney=inc? item.AmountOfMoney+money:item.AmountOfMoney-money;
                 db.SaveChanges();
             }
         }

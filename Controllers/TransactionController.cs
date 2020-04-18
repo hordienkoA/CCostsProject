@@ -100,7 +100,7 @@ namespace CCostsProject.Controllers
 
                 if (transaction.ItemId != null)
                 {
-                    ((ItemWorker)itemWork).IncreaseItemData(itemWork.GetEntity(transaction.ItemId),transaction.Money);
+                    ((ItemWorker)itemWork).ManageItemData(itemWork.GetEntity(transaction.ItemId),transaction.Money,true);
                 }
                 transaction.User = userWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == User.Identity.Name);
@@ -138,6 +138,8 @@ namespace CCostsProject.Controllers
                 Transaction transaction = (Transaction) transactionWork.GetEntity(id);
                 if (transaction != null && transaction.User.UserName == User.Identity.Name)
                 {
+                    ((ItemWorker)itemWork).ManageItemData(itemWork.GetEntity(transaction.ItemId),transaction.Money,false);
+
                     transactionWork.DeleteEntity(transaction);
                     Response.ContentType = "application/json";
 
