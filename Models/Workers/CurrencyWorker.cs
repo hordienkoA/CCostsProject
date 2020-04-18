@@ -32,7 +32,20 @@ namespace CCostsProject.Models
 
         public void EditEntity(ITable entity)
         {
-            throw new System.NotSupportedException();
+            var newCurrency = entity as Currency;
+            if (newCurrency != null)
+            {
+                var currency = db.Currencies.FirstOrDefault(c => c.Id == entity.Id);
+                if (currency != null)
+                {
+                    currency.cc = newCurrency.cc;
+                    currency.exchangedate = newCurrency.exchangedate;
+                    currency.r030 = newCurrency.r030;
+                    currency.rate = newCurrency.rate;
+                    currency.txt = newCurrency.txt;
+                    db.SaveChanges();
+                }
+            }
         }
 
         public void DeleteEntity(ITable entity)

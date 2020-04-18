@@ -26,12 +26,12 @@ namespace CCostsProject.Models
                 db.Users.AddRange(Admin);
                 
             }
-            if (!db.Currencies.Any())
+            /*if (!db.Currencies.Any())
             {
                 db.Currencies.Add(new Currency() { Name = "USD" });
                 db.Currencies.Add(new Currency() { Name = "UAH" });
                
-            }
+            }*/
             /*if (!db.Items.Any())
             {
                 db.Items.Add(new Item { Name = "Food",CurrencyId = 1});
