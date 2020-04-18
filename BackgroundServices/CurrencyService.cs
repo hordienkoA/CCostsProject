@@ -47,6 +47,7 @@ namespace CCostsProject.BackgroundServices
             HttpClient client=new HttpClient();
             HttpRequestMessage request=new HttpRequestMessage();
             request.RequestUri=new Uri($"https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");
+
             request.Method = HttpMethod.Get;
             request.Headers.Add("Accept", "application/json");
             HttpResponseMessage response = await client.SendAsync(request);
