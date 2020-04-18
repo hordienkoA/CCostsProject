@@ -13,7 +13,18 @@ namespace CCostsProject.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public int r030 { get; set; }
+        [Required]
+
+        public string txt { get; set; }
+        [Required]
+
+        public double rate { get; set; }
+        [Required]
+        public string cc { get; set; }
+        [Required]
+
+        public string exchangedate { get; set; }
         [JsonIgnore]
         public List<User> Users { get; set; }
         [JsonIgnore]
