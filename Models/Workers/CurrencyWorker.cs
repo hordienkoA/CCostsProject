@@ -20,6 +20,7 @@ namespace CCostsProject.Models
         public List<ITable> GetEntities()
         {
             return db.Currencies.ToList<ITable>();
+            
         }
 
         public void AddEntity(ITable entity)

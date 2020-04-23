@@ -43,6 +43,8 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }
         
+        [JsonIgnore]
+        public List<Item> Items { get; set; }
         
         
         public int? CurrencyId { get; set; }

@@ -58,9 +58,13 @@ namespace CCostsProject.BackgroundServices
 
                 var deserializedJson =
                     JsonConvert.DeserializeObject<List<Currency>>(responseContent.ReadAsStringAsync().Result);
+                deserializedJson.InsertRange(1,new List<Currency>{deserializedJson.First(cur=>cur.cc=="USD"),
+                    deserializedJson.First(cur=>cur.cc=="EUR"),
+                    new Currency{exchangedate = DateTime.Now.ToString(),cc="UAH",txt = "Українська гривня",rate = 1}});
+                
                 if (!currencyWorker.GetEntities().Any())
                 {
-                    foreach (var c in deserializedJson)
+                    foreach (var c in deserializedJson.Distinct())
                     {
                         currencyWorker.AddEntity(c);
                         _logger.LogInformation($"{c.txt} was added to db");
@@ -70,9 +74,12 @@ namespace CCostsProject.BackgroundServices
                 {
                     foreach (var c in deserializedJson)
                     {
-                        c.Id= currencyWorker.GetEntities().Cast<Currency>().First(t => t.cc == c.cc).Id;
-                       currencyWorker.EditEntity(c);
-                        
+                        var currentCur = currencyWorker.GetEntities().Cast<Currency>().FirstOrDefault(t => t.cc == c.cc);
+                        if (currentCur != null)
+                        {
+                            c.Id = currentCur.Id;
+                            currencyWorker.EditEntity(c);
+                        }
                     }
                 }
                 

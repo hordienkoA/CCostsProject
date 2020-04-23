@@ -20,7 +20,7 @@ namespace CCostsProject.Models
                 var Admin = new User
                 {
                     UserName = "Admin", FirstName = "Johny ", SecondName = "Sins", Email = "baldfrombrazzers@pussy.com",
-                    Password = "Admin", Position = "Admin"
+                    Password = "Admin", Position = "Admin",CurrencyId = 1
                 };
                 
                 db.Users.AddRange(Admin);

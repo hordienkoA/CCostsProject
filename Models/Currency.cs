@@ -21,7 +21,7 @@ namespace CCostsProject.Models
 
         public double rate { get; set; }
         [Required]
-        public string cc { get; set; }
+        public string cc { get; set; } 
         [Required]
 
         public string exchangedate { get; set; }

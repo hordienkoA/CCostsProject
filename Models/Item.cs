@@ -24,6 +24,10 @@ namespace CConstsProject.Models
         public Currency Currency { get; set; }
         public double AmountOfMoney { get; set; }
         
+        [JsonIgnore]
+        public int? UserId { get; set; }
+        [JsonIgnore]
+        public User User { get; set; }
 
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }

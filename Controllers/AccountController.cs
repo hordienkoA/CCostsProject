@@ -33,7 +33,7 @@ namespace CConstsProject.Controllers
         IWorker FamilyWork;
         public AccountController(ApplicationContext context, IInitializer init)
         {
-            this.db = context;
+            db = context;
             Worker = new UserWorker(db);
             FamilyWork=new FamilyWorker(db);
             init.CheckAndInitialize();
@@ -48,7 +48,7 @@ namespace CConstsProject.Controllers
         [Produces("application/json")]
         [AllowAnonymous]
         [HttpPost("login")]
-        public async System.Threading.Tasks.Task Token([FromBody] LoginViewModel value)
+        public async Task Token([FromBody] LoginViewModel value)
         {
 
             try
@@ -112,7 +112,7 @@ namespace CConstsProject.Controllers
         [AllowAnonymous]
         [Produces("application/json")]
         [HttpPost("registration")]
-        public async System.Threading.Tasks.Task Post([FromBody]User user)
+        public async Task Post([FromBody]User user)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace CConstsProject.Controllers
         ///<response code="404">if user with that id not found </response>
         
         [HttpGet]
-        public async System.Threading.Tasks.Task Get([FromHeader] string id)
+        public async Task Get([FromHeader] string id)
         {
             try
             {

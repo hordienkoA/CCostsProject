@@ -9,6 +9,7 @@ using CCostsProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace CCostsProject.Controllers
 {
@@ -36,15 +37,15 @@ namespace CCostsProject.Controllers
         ///<response code="400">"Bad request"</response>
         
         [HttpGet]
-        public async System.Threading.Tasks.Task Get()
+        public async Task Get()
         {
             try
             {
                 
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", Worker.GetEntities()));
-                    return;
+                    
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",Worker.GetEntities().Cast<Currency>().Select(c => new {Id = c.Id, Name = c.cc})));
                 
                 
             }
