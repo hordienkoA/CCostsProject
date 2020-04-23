@@ -15,7 +15,7 @@ namespace CCostsProject.json_structure
             var structureResponse = new CustomStructureOfJsonRequest();
             structureResponse.messages.Add(new CustomJsonObject { field = field, text = text, type = type });
             structureResponse.data = (data is IList)
-                ? new { list = ((List<ITable>)data).Cast<object>().ToList()}
+                ? new { list = ((List<object>)data)}
                 : data;
             var json = JsonConvert.SerializeObject(structureResponse);
             return json;

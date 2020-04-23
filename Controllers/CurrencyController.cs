@@ -45,7 +45,7 @@ namespace CCostsProject.Controllers
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",Worker.GetEntities().Cast<Currency>().Select(c => new {Id = c.Id, Name = c.cc})));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",Worker.GetEntities().Cast<Currency>().Select(c => new {Id = c.Id, Name = c.cc}).ToList<object>()));
                 
                 
             }
