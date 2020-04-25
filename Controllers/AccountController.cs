@@ -191,12 +191,6 @@ namespace CConstsProject.Controllers
                         return;
                        
                     }
-                    else
-                    {
-                        Response.StatusCode = 400;
-                        Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
-                    }
                 }
                 else
                 {

@@ -39,39 +39,39 @@ namespace CCostsProject.Controllers
             int IntegerId;
             try
             {
-            if (int.TryParse(id, out IntegerId))
-            {
+                if (int.TryParse(id, out IntegerId))
+                {
                 
                     var currentUser = userWork.GetEntities().Cast<User>()
                         .FirstOrDefault(u => u.UserName == User.Identity.Name);
                     Transaction transaction = (Transaction) transactionWork.GetEntity(IntegerId); 
                     
-                        Response.ContentType = "application/json";
+                    Response.ContentType = "application/json";
 
-                        Response.StatusCode =transaction!=null?transaction.User.Family!=null?(transaction.User.UserName==User.Identity.Name||
-                                             transaction.User.Family.Users.Contains(currentUser))?200:404:transaction.User.UserName==User.Identity.Name?200:404:404;
+                    Response.StatusCode =transaction!=null?transaction.User.Family!=null?(transaction.User.UserName==User.Identity.Name||
+                                                                                          transaction.User.Family.Users.Contains(currentUser))?200:404:transaction.User.UserName==User.Identity.Name?200:404:404;
 
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", Response.StatusCode==200?"Ok":"Not found", 
-                            Response.StatusCode==200?"Success":"Error", 
-                            Response.StatusCode==200 ?transaction:null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", Response.StatusCode==200?"Ok":"Not found", 
+                        Response.StatusCode==200?"Success":"Error", 
+                        Response.StatusCode==200 ?transaction:null));
                         
                     
 
 
                
-            }
-            else if (id == null)
-            {
-                Response.ContentType = "application/json";
+                }
+                else if (id == null)
+                {
+                    Response.ContentType = "application/json";
 
-                Response.StatusCode = 200;
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
-                    transactionWork.GetEntities().Cast<Transaction>().Where(u =>
-                            (u.User.UserName ==
-                             User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false)))
-                        .Cast<ITable>().ToList()));
+                    Response.StatusCode = 200;
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
+                        transactionWork.GetEntities().Cast<Transaction>().Where(u =>
+                                (u.User.UserName ==
+                                    User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false)))
+                            .ToList<object>()));
 
-            }
+                }
             
             }
             catch

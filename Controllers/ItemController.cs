@@ -37,17 +37,17 @@ namespace CCostsProject.Controllers
         {
             try
             {
-            if (id == null)
-            {
-                Response.StatusCode = 200;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetEntities().Cast<Item>().Where(i=>i.User.UserName==User.Identity.Name)));
-                return;
+                if (id == null)
+                {
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", worker.GetEntities().Cast<Item>().Where(i=>i.User.UserName==User.Identity.Name).ToList<object>()));
+                    return;
               
-            }
+                }
 
-            if(Int32.TryParse(id, out var integerId))
-            {
+                if(Int32.TryParse(id, out var integerId))
+                {
                
                     Item item = worker.GetEntities().Cast<Item>().FirstOrDefault(i => i.Id == integerId&&i.User.UserName==User.Identity.Name);
                     if (item == null)
@@ -61,7 +61,7 @@ namespace CCostsProject.Controllers
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", item));
                     
-            }
+                }
            
             }
             catch
