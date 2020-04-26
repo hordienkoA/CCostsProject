@@ -45,14 +45,14 @@ namespace CCostsProject.Controllers
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",Worker.GetEntities().Cast<Currency>().Select(c => new {Id = c.Id, Name = c.cc}).ToList<object>()));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(Worker.GetEntities().Cast<Currency>().Select(c => new {Id = c.Id, Name = c.cc}).ToList<object>()));
                 
                 
             }
             catch {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
             }
         }
     }

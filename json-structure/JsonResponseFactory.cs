@@ -10,15 +10,25 @@ namespace CCostsProject.json_structure
 {
     public static class JsonResponseFactory
     {
-        public static string  CreateJson(string field,object text,string type,object data)
+        public static string  CreateJson(object data,List<object> fields=null,List<object> errors=null)
         {
             var structureResponse = new CustomStructureOfJsonRequest();
-            structureResponse.messages.Add(new CustomJsonObject { field = field, text = text, type = type });
+            if (fields != null)
+            {
+                foreach (var VARIABLE in fields)
+                {
+                    structureResponse.messages.Add(new CustomJsonObject
+                        {field = VARIABLE, errors = errors[fields.IndexOf(VARIABLE)]});
+                }
+            }
+
             structureResponse.data = (data is IList)
                 ? new { list = ((List<object>)data)}
                 : data;
             var json = JsonConvert.SerializeObject(structureResponse);
             return json;
         }
+
+        
     }
 }

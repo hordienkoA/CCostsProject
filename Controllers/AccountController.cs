@@ -26,6 +26,7 @@ namespace CConstsProject.Controllers
 {
     [Route("api/accounts")]
     [Authorize(AuthenticationSchemes = "Bearer")]
+    [Produces("application/json")]
     public class AccountController : Controller
     {
         ApplicationContext db;
@@ -57,7 +58,7 @@ namespace CConstsProject.Controllers
             if (identity == null)
             {
                 Response.StatusCode = 401;
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("","Invalid username or password","Error",null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,null,new List<object>{"Invalid username or password"}));
                 return;
             }
             var now = DateTime.UtcNow;
@@ -75,13 +76,13 @@ namespace CConstsProject.Controllers
                 username = identity.Name
             };
             Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonResponseFactory.CreateJson("","ok","Success",response));
+            await Response.WriteAsync(JsonResponseFactory.CreateJson(response));
             }
             catch
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
             }
         }
 
@@ -122,7 +123,7 @@ namespace CConstsProject.Controllers
                     Worker.AddEntity(user);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                         Worker.GetEntities().Cast<User>().LastOrDefault()));
                     return;
                 }
@@ -131,8 +132,8 @@ namespace CConstsProject.Controllers
 
                     Response.ContentType = "application/json";
                     Response.StatusCode = 400;
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("email or username",
-                        "email or username are not unique", "Error", null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
+                          new List<object>{"Email | UserName"},new List<object>{"email or username are not unique"}));
 
                 }
 
@@ -142,7 +143,7 @@ namespace CConstsProject.Controllers
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
             }
         }
 
@@ -171,13 +172,13 @@ namespace CConstsProject.Controllers
                         {
                             Response.StatusCode = 200;
                             Response.ContentType = "application/json";
-                            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok","Success",user));
+                            await Response.WriteAsync(JsonResponseFactory.CreateJson(user));
                             return;
 
                         }
                         Response.StatusCode = 404;
                         Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error",null));
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
                        
 
                     }
@@ -187,7 +188,7 @@ namespace CConstsProject.Controllers
                     {
                         Response.StatusCode = 200;
                         Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson("",  "Ok","Success", db.Users.Cast<ITable>().ToList()));
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson(db.Users.Cast<ITable>().ToList()));
                         return;
                        
                     }
@@ -196,7 +197,7 @@ namespace CConstsProject.Controllers
                 {
                     Response.StatusCode = 403;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Permission denied", "Error",null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
                     return;
                 }
             }
@@ -204,7 +205,7 @@ namespace CConstsProject.Controllers
             {
                Response.StatusCode = 400;
                Response.ContentType = "application/json";
-               await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error",null));
+               await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
                 
             }
         }
@@ -218,7 +219,7 @@ namespace CConstsProject.Controllers
             {
                 Response.StatusCode = 403;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error",null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
                 return;
             }
 
@@ -233,7 +234,7 @@ namespace CConstsProject.Controllers
             }
             Response.StatusCode = 200;
             Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok","Success" ,null));
+            await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
             
             
 

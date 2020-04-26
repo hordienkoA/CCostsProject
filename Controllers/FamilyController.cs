@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
@@ -52,7 +53,7 @@ namespace CCostsProject.Controllers
 
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
+                await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                     _worker.GetEntities().LastOrDefault()));
 
             }
@@ -60,9 +61,8 @@ namespace CCostsProject.Controllers
             {
                 Response.StatusCode = ex is FamilyAlreadyExistException?403:400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(ex is FamilyAlreadyExistException?"Family.Name":"", 
-                    ex is FamilyAlreadyExistException?"family name is not unique":"Bad request",
-                    "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,ex is FamilyAlreadyExistException?new List<object>{"Name"}:null, 
+                    ex is FamilyAlreadyExistException?new List<object>{"family name is not unique"}:null));
             }
             
         }
@@ -81,15 +81,15 @@ namespace CCostsProject.Controllers
                
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success",
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                         _worker.GetEntities().Cast<Family>()
-                            .Where(f => f.Users.Exists(u=>u.UserName == HttpContext.User.Identity.Name))));
+                            .Where(f => f.Users.Exists(u=>u.UserName == HttpContext.User.Identity.Name)).ToList<object>()));
             }
             catch
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
             }
 
         }
@@ -121,19 +121,19 @@ namespace CCostsProject.Controllers
                     ((FamilyWorker) _worker).AddUser(familyUserView.familyId, familyUserView.userId);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", ""));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
                     return;
                 }
 
                 Response.StatusCode = 403;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
             }
             catch
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
                 
             }
         }
@@ -158,7 +158,7 @@ namespace CCostsProject.Controllers
                 {
                     Response.StatusCode = 404;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null)); 
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson( null)); 
                     return;
                 }
 
@@ -168,19 +168,19 @@ namespace CCostsProject.Controllers
                 {
                     Response.StatusCode = 403;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error", null)); 
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null)); 
                     return;
                 }
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", users.Cast<ITable>().ToList())); 
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(  users.Cast<ITable>().ToList())); 
                 
             }
             catch
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
             }
         }
 
@@ -206,7 +206,7 @@ namespace CCostsProject.Controllers
                 {
                     Response.StatusCode = 404;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Not found", "Error", null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
                     return;
 
                 }
@@ -219,13 +219,13 @@ namespace CCostsProject.Controllers
                     _worker.DeleteEntity(family);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Ok", "Success", null));
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
                     return;
                 }
 
                 Response.StatusCode = 403;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Forbidden", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
 
 
 
@@ -234,7 +234,7 @@ namespace CCostsProject.Controllers
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(  null));
             }
         }
         
