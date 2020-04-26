@@ -18,7 +18,7 @@ namespace CConstsProject.Models
         public string Name { get; set; }
         public int Percent { get; set; }
         public int AmountOfOutgoes { get; set; }
-        [Required]
+       // [Required]
         public int? CurrencyId { get; set; }
         [JsonIgnore]
         public Currency Currency { get; set; }
