@@ -64,7 +64,7 @@ namespace CCostsProject.Controllers
                     Response.StatusCode = 200;
                     await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                         transactionWork.GetEntities().Cast<Transaction>().Where(u =>
-                                (((fromDate==null?true:u.Date>=fromDate)&&(toDate==null?true:u.Date<=toDate))&&type!=null?type.Trim()=="Outgo"?u.ItemId!=null&&u.WorkType==null:type.Trim()=="Income"?u.WorkType!=null&&u.ItemId==null:true:true&&(u.User.UserName ==
+                                (((fromDate==null?true:u.Date>=fromDate)&&(toDate==null?true:u.Date<=toDate))&&type!=null?type.Trim().Equals("Outgo",StringComparison.OrdinalIgnoreCase)?u.ItemId!=null&&u.WorkType==null:type.Trim().Equals("Income",StringComparison.OrdinalIgnoreCase)?u.WorkType!=null&&u.ItemId==null:true:true&&(u.User.UserName ==
                                     User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false))))
                             .ToList<object>()));
                 }
