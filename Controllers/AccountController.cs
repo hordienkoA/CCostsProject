@@ -58,7 +58,7 @@ namespace CConstsProject.Controllers
             if (identity == null)
             {
                 Response.StatusCode = 401;
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,null,new List<object>{"Invalid username or password"}));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,new List<object>{"Username | Password"},new List<object>{"Invalid username or password"}));
                 return;
             }
             var now = DateTime.UtcNow;

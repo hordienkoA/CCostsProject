@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.json_structure;
@@ -33,7 +35,7 @@ namespace CCostsProject.Controllers
         ///<response code="404"> if transaction with that id not found</response>
         ///<response code="400">"Bad request"</response>
         [HttpGet]
-        public async Task Get([FromHeader] string id)
+        public async Task Get([FromHeader] string id,[FromHeader] DateTime? fromDate ,DateTime? toDate,[FromHeader] string type)
         {
             
             int IntegerId;
@@ -54,11 +56,6 @@ namespace CCostsProject.Controllers
                     await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                          
                         Response.StatusCode==200 ?transaction:null));
-                        
-                    
-
-
-               
                 }
                 else if (id == null)
                 {
@@ -67,10 +64,9 @@ namespace CCostsProject.Controllers
                     Response.StatusCode = 200;
                     await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                         transactionWork.GetEntities().Cast<Transaction>().Where(u =>
-                                (u.User.UserName ==
-                                    User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false)))
+                                (((fromDate==null?true:u.Date>=fromDate)&&(toDate==null?true:u.Date<=toDate))&&type!=null?type.Trim()=="Outgo"?u.ItemId!=null&&u.WorkType==null:type.Trim()=="Income"?u.WorkType!=null&&u.ItemId==null:true:true&&(u.User.UserName ==
+                                    User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false))))
                             .ToList<object>()));
-
                 }
             
             }
@@ -80,9 +76,7 @@ namespace CCostsProject.Controllers
 
                 Response.StatusCode = 400;
                 await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
-
             }
-           
         }
 
         ///<summary>Add a transaction</summary>
@@ -96,11 +90,25 @@ namespace CCostsProject.Controllers
         {
             try
             {
-
+                
 
                 if (transaction.ItemId != null)
                 {
                     ((ItemWorker)itemWork).ManageItemData(itemWork.GetEntity(transaction.ItemId),transaction.Money,true);
+                }
+
+                if ((transaction.ItemId != null && transaction.WorkType != null) ||
+                    (transaction.ItemId == null && transaction.WorkType == null))
+                {
+                    Response.StatusCode = 400;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
+                        new List<object> {"WorkType | ItemId"},
+                        new List<object>()
+                        {
+                            "The transaction can be only outgo or income.\n If outgo the ItemId field must be set but itemId=null , else Item id must be set and WorkType=null"
+                        }));
+                    return;
                 }
                 transaction.User = userWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == User.Identity.Name);
