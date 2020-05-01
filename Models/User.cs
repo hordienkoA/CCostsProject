@@ -46,6 +46,7 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public List<Item> Items { get; set; }
         
+        public List<Plan> Goals { get; set; }
         
         public int? CurrencyId { get; set; }
         [JsonIgnore]
@@ -56,9 +57,6 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public FileInfo  Avatar { get; set; }
         
-        public User()
-        {
-            
-        }
+        
     }
 }

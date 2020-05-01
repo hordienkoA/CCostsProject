@@ -11,7 +11,7 @@ namespace CCostsProject.Validation
             RuleFor(user => user.Email).NotNull().WithMessage("Email is a required field")
                 .Matches(@"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").WithMessage("The email address not valid");
             RuleFor(user => user.UserName).NotNull().WithMessage("Username is a required field")
-                .Matches("^[a-zA-Z0-9\\._]*$").WithMessage("Username is not valid")
+                .Matches("^[a-zA-Z0-9\\._-]*$").WithMessage("Username is not valid")
                 .MinimumLength(3).WithMessage("Username must have 3 or more character")
                 .MaximumLength(64).WithMessage("Username must have 64 or less characters");
             RuleFor(user => user.Password)

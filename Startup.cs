@@ -101,6 +101,7 @@ namespace CConstsProject
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
             services.AddHostedService<CurrencyService>();
+            services.AddHostedService<GoalService>();
             services.AddScoped<IInitializer, Initializer>();
             services.AddMvc(opt =>
             {

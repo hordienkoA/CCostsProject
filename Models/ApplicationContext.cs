@@ -16,7 +16,7 @@ namespace CConstsProject.Models
         public DbSet<Family> Families { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Item> Items { get; set; }
-        
+        public DbSet<Plan> Goals { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<FileInfo> FileInfos { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)

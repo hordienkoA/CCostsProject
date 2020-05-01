@@ -30,6 +30,9 @@ namespace CCostsProject.Models
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }
         
+        [JsonIgnore]
+        public List<Plan> Plans { get; set; }
+
         public Currency()
         {
             Users = new List<User>();
