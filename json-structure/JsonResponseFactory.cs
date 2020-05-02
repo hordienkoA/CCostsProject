@@ -18,7 +18,7 @@ namespace CCostsProject.json_structure
                 foreach (var VARIABLE in fields)
                 {
                     structureResponse.messages.Add(new CustomJsonObject
-                        {field = VARIABLE, errors = errors[fields.IndexOf(VARIABLE)]});
+                        {field = VARIABLE, errors = string.Join("\n",errors[fields.IndexOf(VARIABLE)])});
                 }
             }
 

@@ -16,6 +16,8 @@ namespace CCostsProject.Models
         [Required]
         public double Money { get; set; }
         [Required]
+        [DisplayFormat(DataFormatString = "{0:yyyy'-'MMMM-dd'T'HH:mm:ss'Z'}",ApplyFormatInEditMode = true)]
+
         public DateTime Date { get; set; }
         public string Type { get; set; }
         public string Description { get; set; }
