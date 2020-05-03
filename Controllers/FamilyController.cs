@@ -62,7 +62,7 @@ namespace CCostsProject.Controllers
                 Response.StatusCode = ex is FamilyAlreadyExistException?403:400;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson(null,ex is FamilyAlreadyExistException?new List<object>{"Name"}:null, 
-                    ex is FamilyAlreadyExistException?new List<object>{"family name is not unique"}:null));
+                    ex is FamilyAlreadyExistException?new List<string>{"family name is not unique"}:null));
             }
             
         }

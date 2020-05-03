@@ -58,7 +58,7 @@ namespace CConstsProject.Controllers
             if (identity == null)
             {
                 Response.StatusCode = 401;
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,new List<object>{"Username | Password"},new List<object>{"Invalid username or password"}));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,new List<object>{"Username | Password"},new List<string>{"Invalid username or password"}));
                 return;
             }
             var now = DateTime.UtcNow;
@@ -133,7 +133,7 @@ namespace CConstsProject.Controllers
                     Response.ContentType = "application/json";
                     Response.StatusCode = 400;
                     await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
-                          new List<object>{"Email | UserName"},new List<object>{"email or username are not unique"}));
+                          new List<object>{"Email | UserName"},new List<string>{"email or username are not unique"}));
 
                 }
 

@@ -104,7 +104,7 @@ namespace CCostsProject.Controllers
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
                         new List<object> {"WorkType | ItemId"},
-                        new List<object>()
+                        new List<string>()
                         {
                             "The transaction can be only outgo or income.\n If outgo the ItemId field must be set but itemId=null , else Item id must be set and WorkType=null"
                         }));

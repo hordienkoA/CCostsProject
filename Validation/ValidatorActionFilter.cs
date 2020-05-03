@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CCostsProject.json_structure;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace CCostsProject.Validation
                 context.HttpContext.Response.StatusCode = 400;
                 
                 
-                context.Result=new JsonResult(JsonConvert.DeserializeObject( JsonResponseFactory.CreateJson(null,new List<object>(context.ModelState.Keys),new List<object>(context.ModelState.Values.Select(v=>v.Errors.Select(t=>t.ErrorMessage))))));
+                context.Result=new JsonResult(JsonConvert.DeserializeObject( JsonResponseFactory.CreateJson(null,new List<object>(context.ModelState.Keys),new List<string>(context.ModelState.Values.Select(v=>string.Join('\n',v.Errors.Select(t=>t.ErrorMessage)))))));
             }
         }
 

@@ -46,6 +46,7 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public List<Item> Items { get; set; }
         
+        [JsonIgnore]
         public List<Plan> Goals { get; set; }
         
         public int? CurrencyId { get; set; }

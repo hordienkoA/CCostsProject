@@ -8,7 +8,7 @@ namespace CCostsProject.json_structure
     public class CustomJsonObject
     {
        public object field { get; set; }
-       public object errors { get; set; }
+       public object text { get; set; }
        
     }
 }
