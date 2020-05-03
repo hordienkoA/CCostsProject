@@ -19,7 +19,7 @@ namespace CCostsProject.Models
         [DisplayFormat(DataFormatString = "{0:yyyy'-'MMMM-dd'T'HH:mm:ss'Z'}",ApplyFormatInEditMode = true)]
 
         public DateTime DateFinish { get; set; }
-        [Required]
+        /*[Required]*/
         public string Status { get; set; }
         public int? UserId { get; set; }
         [JsonIgnore]
