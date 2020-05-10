@@ -96,7 +96,7 @@ namespace CCostsProject.Controllers
                 }
 
                 item.User = userWork.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == User.Identity.Name);
-                if (item.CurrencyId == null) item.CurrencyId = item.User.CurrencyId;
+                if (item.CurrencyId == null||item.CurrencyId==0) item.CurrencyId = item.User.CurrencyId;
                 worker.AddEntity(item);
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
