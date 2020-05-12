@@ -10,7 +10,7 @@ namespace CCostsProject.json_structure
 {
     public static class JsonResponseFactory
     {
-        public static string  CreateJson(object data,List<object> fields=null,List<string> errors=null)
+        public static string CreateJson(object data, List<object> fields = null, List<string> errors = null)
         {
             var structureResponse = new CustomStructureOfJsonRequest();
             if (fields != null)
@@ -18,7 +18,7 @@ namespace CCostsProject.json_structure
                 foreach (var VARIABLE in fields)
                 {
                     structureResponse.messages.Add(new CustomJsonObject
-                        {field = VARIABLE, text = errors[fields.IndexOf(VARIABLE)]});
+                    { field = VARIABLE, text = errors[fields.IndexOf(VARIABLE)] });
                 }
             }
 

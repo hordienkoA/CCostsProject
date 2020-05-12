@@ -113,6 +113,8 @@ namespace CCostsProject.Controllers
                 transaction.User = userWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == User.Identity.Name);
                 transaction.User.CashSum += transaction.Money;
+                transaction.CurrencyId=(transaction.CurrencyId==0||transaction.CurrencyId==null)?transaction.User.CurrencyId:transaction
+                    .CurrencyId;
                 transactionWork.AddEntity(transaction);
                 
                 Response.ContentType = "application/json";

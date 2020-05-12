@@ -17,9 +17,9 @@ namespace CCostsProject.Validation
             {
                  
                 context.HttpContext.Response.StatusCode = 400;
-                
-                
-                context.Result=new JsonResult(JsonConvert.DeserializeObject( JsonResponseFactory.CreateJson(null,new List<object>(context.ModelState.Keys),new List<string>(context.ModelState.Values.Select(v=>string.Join('\n',v.Errors.Select(t=>t.ErrorMessage)))))));
+
+
+                context.Result = new JsonResult(JsonConvert.DeserializeObject(JsonResponseFactory.CreateJson(null, new List<object>(context.ModelState.Keys), new List<string>(context.ModelState.Values.Select(v => string.Join('\n', v.Errors.Select(t => t.ErrorMessage)))))));
             }
         }
 

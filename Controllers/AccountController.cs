@@ -58,8 +58,8 @@ namespace CConstsProject.Controllers
             if (identity == null)
             {
                 Response.StatusCode = 401;
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,new List<object>{"Username | Password"},new List<string>{"Invalid username or password"}));
-                return;
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null, new List<object> { "Username | Password" }, new List<string> { "Invalid username or password" }));
+                    return;
             }
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
@@ -78,11 +78,11 @@ namespace CConstsProject.Controllers
             Response.ContentType = "application/json";
             await Response.WriteAsync(JsonResponseFactory.CreateJson(response));
             }
-            catch
+            catch(Exception ex )
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,null));
             }
         }
 
@@ -133,7 +133,7 @@ namespace CConstsProject.Controllers
                     Response.ContentType = "application/json";
                     Response.StatusCode = 400;
                     await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
-                          new List<object>{"Email | UserName"},new List<string>{"email or username are not unique"}));
+                          new List<object> { "Email | UserName" }, new List<string> { "email or username are not unique" }));
 
                 }
 
@@ -163,8 +163,7 @@ namespace CConstsProject.Controllers
             try
             {
 
-                if (User.Identity.Name.Trim() == "Admin")
-                {
+                
                     if (Int32.TryParse(id,out var integerId))
                     {
                         User user = (User)Worker.GetEntity(integerId);
@@ -172,7 +171,7 @@ namespace CConstsProject.Controllers
                         {
                             Response.StatusCode = 200;
                             Response.ContentType = "application/json";
-                            await Response.WriteAsync(JsonResponseFactory.CreateJson(user));
+                            await Response.WriteAsync(JsonResponseFactory.CreateJson(new {Id=user.Id,UserName=user.UserName}));
                             return;
 
                         }
@@ -188,11 +187,11 @@ namespace CConstsProject.Controllers
                     {
                         Response.StatusCode = 200;
                         Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson(db.Users.Cast<ITable>().ToList()));
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson(db.Users.Select(u=>new {Id=u.Id,UserName=u.UserName}).ToList<object>()));
                         return;
                        
                     }
-                }
+                
                 else
                 {
                     Response.StatusCode = 403;
