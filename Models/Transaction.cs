@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CConstsProject.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CCostsProject.Models
 {
@@ -19,12 +20,18 @@ namespace CCostsProject.Models
         [DisplayFormat(DataFormatString = "{0:yyyy'-'MMMM-dd'T'HH:mm:ss'Z'}",ApplyFormatInEditMode = true)]
 
         public DateTime Date { get; set; }
-        public string Type { get; set; }
+        
+        /*[EnumDataType(typeof(TransactionType))]
+        [JsonConverter(typeof(StringEnumConverter))]*/
+        public TransactionType Type { get; set; }
         public string Description { get; set; }
         public int? ItemId { get; set; }
         [JsonIgnore]
         public Item Item { get; set; }
-        public string WorkType { get; set; }
+        
+        /*[EnumDataType(typeof(WorkType))]
+        [JsonConverter(typeof(StringEnumConverter))]*/
+        public WorkType WorkType { get; set; }
         public int? CurrencyId { get; set; }
         [JsonIgnore]
         public Currency Currency { get; set; }
