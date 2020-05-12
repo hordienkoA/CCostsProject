@@ -22,14 +22,14 @@ namespace CCostsProject.Models
         public DateTime Date { get; set; }
         
         
-        public TransactionType Type { get; set; }
+        public TransactionType? Type { get; set; }
         public string Description { get; set; }
         public int? ItemId { get; set; }
         [JsonIgnore]
         public Item Item { get; set; }
         
         
-        public WorkType WorkType { get; set; }
+        public WorkType? WorkType { get; set; }
         public int? CurrencyId { get; set; }
         [JsonIgnore]
         public Currency Currency { get; set; }
