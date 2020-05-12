@@ -21,16 +21,14 @@ namespace CCostsProject.Models
 
         public DateTime Date { get; set; }
         
-        /*[EnumDataType(typeof(TransactionType))]
-        [JsonConverter(typeof(StringEnumConverter))]*/
+        
         public TransactionType Type { get; set; }
         public string Description { get; set; }
         public int? ItemId { get; set; }
         [JsonIgnore]
         public Item Item { get; set; }
         
-        /*[EnumDataType(typeof(WorkType))]
-        [JsonConverter(typeof(StringEnumConverter))]*/
+        
         public WorkType WorkType { get; set; }
         public int? CurrencyId { get; set; }
         [JsonIgnore]

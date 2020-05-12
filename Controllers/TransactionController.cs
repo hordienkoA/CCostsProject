@@ -34,11 +34,17 @@ namespace CCostsProject.Controllers
         ///<response code= "401">if the user has not authorized</response>
         ///<response code="404"> if transaction with that id not found</response>
         ///<response code="400">"Bad request"</response>
+       
+        
+        [ProducesResponseType(typeof(JsonStructureExample<List<Transaction>>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),404)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
         [HttpGet]
         public async Task Get([FromHeader] string id,[FromHeader] DateTime? fromDate ,DateTime? toDate,[FromHeader] string type)
         {
             
             int IntegerId;
+            
             try
             {
                 if (int.TryParse(id, out IntegerId))
@@ -83,8 +89,11 @@ namespace CCostsProject.Controllers
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code= "401">if the user has not authorized</response>
         ///<response code="200">Returns a transaction that was aded </response>
-        ///<response code="403">if request data was incorrect</response>
         ///<response code="400">"Bad request"</response>
+        
+        [ProducesResponseType(typeof(JsonStructureExample<Transaction>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),404)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
         [HttpPost]
         public async Task Post([FromBody] Transaction transaction)
         {
@@ -140,6 +149,10 @@ namespace CCostsProject.Controllers
         ///<response code= "401">if the user has not authorized</response>
         ///<response code="403">If user has not permission for this operation or if transaction with that id not found</response>
         ///<response code="400">"Bad request"</response>
+        [ProducesResponseType(typeof(JsonStructureExample<object>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),403)]
+
         [HttpDelete]
         public async Task Delete([FromHeader] int id)
         {
@@ -178,6 +191,12 @@ namespace CCostsProject.Controllers
         ///<response code= "401">if the user has not authorized</response>
         ///<response code="403">If user has not permission for this operation or if transaction with that id not found</response>
         ///<response code="400">"Bad request"</response>
+        [ProducesResponseType(typeof(JsonStructureExample<Transaction>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),403)]
+
+
+
         [HttpPut]
         public async Task Put([FromBody] Transaction transaction)
         {

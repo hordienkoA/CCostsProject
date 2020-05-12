@@ -33,9 +33,9 @@ namespace CCostsProject.Controllers
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200">Returns currency or currencies</response>
         ///<response code= "401">if the user has not authorized</response>
-        
         ///<response code="400">"Bad request"</response>
-        
+        [ProducesResponseType(typeof(JsonStructureExample<List<CurrencyJsonExample>>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
         [HttpGet]
         public async Task Get()
         {

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.json_structure;
@@ -26,8 +27,12 @@ namespace CCostsProject.Controllers
         ///<summary> Get a goal or goals that current user owns</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200">Return all goals that was created by current user</response>
-        ///<response code="401">If the user has not authorized</response>
         /// <response code="400">If the request date in incorrect</response>
+        ///<response code="401">If the user has not authorized</response>
+        ///<response code="404">If the goal with current id was not found</response>
+        [ProducesResponseType(typeof(JsonStructureExample<List<Plan>>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),404)]
         [HttpGet]
         //[Produces("application/json")]
 
@@ -63,7 +68,10 @@ namespace CCostsProject.Controllers
         ///<response code="200">if the goal was added </response>
         /// <response code="400">If the request data in incorrect</response>
         ///<response code="401">If the user has not authorized</response>
-       [HttpPost]
+        [ProducesResponseType(typeof(JsonStructureExample<Plan>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+
+        [HttpPost]
        public async Task Post([FromBody] Plan plan)
         {
             try
@@ -95,8 +103,15 @@ namespace CCostsProject.Controllers
         ///<response code="400">If the request data in incorrect</response>
         ///<response code="401">If the user has not authorized</response>
         ///<response code="403">If current user doesn`t own this goal</response>
-       [HttpDelete]
-       public async Task Delete([FromHeader] string id)
+        ///<response code="404">If the goal with current id was not found</response>
+
+       
+        [ProducesResponseType(typeof(JsonStructureExample<object>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),403)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),404)]
+        [HttpDelete]
+        public async Task Delete([FromHeader] string id)
        {
            try
            {

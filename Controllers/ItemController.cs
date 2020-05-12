@@ -32,6 +32,12 @@ namespace CCostsProject.Controllers
         ///<response code="401">if the user has not authorized</response>
         ///<returns code="200">return all items that was created by current user</returns>
         ///<response code="404"> if item with that id not found</response>
+        ///<response code="400">If the response body is incorrect</response>
+        [ProducesResponseType(typeof(JsonStructureExample<List<Item>>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),404)]
+
+
         [HttpGet("/api/items")]
         public async System.Threading.Tasks.Task Get([FromHeader] string id)
         {
@@ -78,9 +84,14 @@ namespace CCostsProject.Controllers
         ///<summary>Add an item</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="401">if the user has not authorized</response>
-        ///<response code="200">Returns an item that was aded </response>
+        ///<response code="200">Returns an item that was added </response>
+        ///<response code="400">If the response body is incorrect</response>
         ///<response code="403">if request data was incorrect</response>
 
+        [ProducesResponseType(typeof(JsonStructureExample<Item>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),403)]
+        
         [HttpPost]
         [Produces("application/json")]
         public async System.Threading.Tasks.Task Post([FromBody]Item item)
@@ -121,6 +132,9 @@ namespace CCostsProject.Controllers
         ///<response code="200"></response>
         ///<response code="403"> if item with that id not found or the current user has not permission</response>
 
+        [ProducesResponseType(typeof(JsonStructureExample<object>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),403)]
         [HttpDelete]
         public async System.Threading.Tasks.Task DelItem([FromHeader]int id)
         {
@@ -154,14 +168,19 @@ namespace CCostsProject.Controllers
         ///<response code="401">if the user has not authorized</response>
         ///<response code="400">Bad request</response>
         ///<response code="200">Returns new item</response>
-        ///<response code="403"> if item  not found</response>
+
+        [ProducesResponseType(typeof(JsonStructureExample<Item>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+
+        
 
         [HttpPut]
         public async Task EditItem([FromBody] Item item)
         {
             try
             {
-                if (item != null && item.User.UserName == User.Identity.Name)
+                var current_item = (Item) worker.GetEntity(item.Id);
+                if (current_item != null && current_item.User.UserName == User.Identity.Name)
                 {
                     worker.EditEntity(item);
                     Response.StatusCode = 200;

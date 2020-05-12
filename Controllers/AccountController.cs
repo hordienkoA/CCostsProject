@@ -44,10 +44,13 @@ namespace CConstsProject.Controllers
         /// <summary>
         /// Authentication by JWT
         /// </summary>
-        ///<response code="200">Returns an autherization token </response>
-        ///<response code="401">Returns Invalid username or password or incorect request data</response>
+        ///<response code="200">Returns an authorization token </response>
+        ///<response code="400">If the request data was incorrenct</response>
+        ///<response code="401">Returns Invalid username or password or incorrect request data</response>
         [Produces("application/json")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(JsonStructureExample<LoginJsonExample>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
         [HttpPost("login")]
         public async Task Token([FromBody] LoginViewModel value)
         {
@@ -107,10 +110,13 @@ namespace CConstsProject.Controllers
         /// <summary>
         /// Add new user
         /// </summary>
-        ///<response code="200">If user was added successfull </response>
+        ///<response code="200">If user was added successful </response>
         ///<response code="401">if user with that username exist</response>
         ///<response code="400">Bad request</response>
         [AllowAnonymous]
+        [ProducesResponseType(typeof(JsonStructureExample<User>),200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>),400)]
+
         [Produces("application/json")]
         [HttpPost("registration")]
         public async Task Post([FromBody]User user)
