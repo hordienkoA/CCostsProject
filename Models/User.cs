@@ -34,6 +34,8 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public string Position { get; set; } 
         
+        [JsonIgnore]
+        public string Salt { get; set; }
         
         public double CashSum { get; set; } 
         [JsonIgnore]

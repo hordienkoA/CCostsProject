@@ -2,25 +2,29 @@
 using System.Linq;
 using CConstsProject.Controllers;
 using CConstsProject.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace CCostsProject.Models
 {
     public class Initializer:IInitializer
     {
         private readonly ApplicationContext db;
-        public Initializer(ApplicationContext context)
+        private readonly IConfiguration _config;
+        public Initializer(ApplicationContext context,IConfiguration config)
         {
             db = context;
+            _config = config;
         }
         public void CheckAndInitialize()
         {
             if (!db.Users.Any()||db.Users.FirstOrDefault(u=>u.UserName.Equals("Admin"))==null)
             {
 
+                var salt = Salt.Create();
                 var Admin = new User
                 {
                     UserName = "Admin", FirstName = "Johny ", SecondName = "Sins", Email = "baldfrombrazzers@pussy.com",
-                    Password = "Admin", Position = "Admin",CurrencyId = 1
+                    Password = Hash.Create("Admin"+_config.GetValue<string>("GlobalParameter"),salt),Salt = salt,Position = "Admin",CurrencyId = 1
                 };
                 
                 db.Users.AddRange(Admin);

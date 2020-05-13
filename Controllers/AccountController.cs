@@ -21,6 +21,7 @@ using RestSharp;
 using CCostsProject.json_structure;
 using System.Text;
 using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace CConstsProject.Controllers
 {
@@ -32,12 +33,14 @@ namespace CConstsProject.Controllers
         ApplicationContext db;
         IWorker Worker;
         IWorker FamilyWork;
-        public AccountController(ApplicationContext context, IInitializer init)
+        private IConfiguration _config;
+        public AccountController(ApplicationContext context,IConfiguration config ,IInitializer init)
         {
             db = context;
             Worker = new UserWorker(db);
             FamilyWork=new FamilyWorker(db);
             init.CheckAndInitialize();
+            _config = config;
 
         }
         
@@ -92,7 +95,7 @@ namespace CConstsProject.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         private ClaimsIdentity GetIdentity(StringValues username, StringValues password)
         {
-            User user = db.Users.FirstOrDefault(x => x.UserName == username && x.Password == password);
+            User user = db.Users.FirstOrDefault(x => x.UserName == username && Hash.Validate(password+_config.GetValue<string>("GlobalParameter"),x.Salt,x.Password));
             if (user != null)
             {
                 var claims = new List<Claim>
@@ -108,7 +111,7 @@ namespace CConstsProject.Controllers
 
        
         /// <summary>
-        /// Add new user
+        /// Add a new user
         /// </summary>
         ///<response code="200">If user was added successful </response>
         ///<response code="401">if user with that username exist</response>
@@ -126,6 +129,8 @@ namespace CConstsProject.Controllers
 
                 try
                 {
+                    user.Salt = Salt.Create();
+                    user.Password = Hash.Create(user.Password + _config.GetValue<string>("GlobalParameter"), user.Salt);
                     Worker.AddEntity(user);
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
