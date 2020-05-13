@@ -176,12 +176,18 @@ namespace CConstsProject.Models
         }*/
         public void ClearDb()
         {
-            db.Database.ExecuteSqlCommand("Delete from Items;DBCC CHECKIDENT('Items', RESEED, 0)");
+            /*db.Database.ExecuteSqlCommand("Delete from Items;DBCC CHECKIDENT('Items', RESEED, 0)");
             db.Database.ExecuteSqlCommand("Delete from Transactions;DBCC CHECKIDENT('Transactions', RESEED, 0)");
             db.Database.ExecuteSqlCommand("Delete from Families;DBCC CHECKIDENT('Families', RESEED, 0)");
             db.Database.ExecuteSqlCommand("Delete from FileInfos;DBCC CHECKIDENT('FileInfos', RESEED, 0)");
             //db.Database.ExecuteSqlCommand("Delete from Currencies;DBCC CHECKIDENT('Currencies', RESEED, 0)");
-            db.Database.ExecuteSqlCommand("Delete from Users;DBCC CHECKIDENT('Users', RESEED, 0)");
+            db.Database.ExecuteSqlCommand("Delete from Users;DBCC CHECKIDENT('Users', RESEED, 0)");*/
+            db.Families.RemoveRange(db.Families);
+            db.Goals.RemoveRange(db.Goals);
+            db.Items.RemoveRange(db.Items);
+            db.Users.RemoveRange(db.Users);
+            db.Transactions.RemoveRange(db.Transactions);
+            db.SaveChanges();
 
 
 

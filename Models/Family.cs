@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CCostsProject.Models;
@@ -14,6 +15,7 @@ namespace CConstsProject.Models
         public string Name{ get; set; }
         public string AdditionalInfo { get; set; }
         
+        public DateTime createdAt { get; set; }
         
         [JsonIgnore]
         public List<User> Users { get; set; }
