@@ -1,4 +1,6 @@
-﻿namespace CCostsProject.Models
+﻿using System;
+
+namespace CCostsProject.Models
 {
     public enum TransactionType
     {

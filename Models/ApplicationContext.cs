@@ -19,6 +19,7 @@ namespace CConstsProject.Models
         public DbSet<Plan> Goals { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<FileInfo> FileInfos { get; set; }
+        public DbSet<Invite> Invites { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             :base(options)
         {

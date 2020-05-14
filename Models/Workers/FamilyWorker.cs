@@ -66,11 +66,14 @@ namespace CCostsProject.Models
             db.Families.Remove(entity as Family ?? throw new NullReferenceException());
             db.SaveChanges();
         }
-        public void AddUser(int familyId, int userId)
+        public void AddUser(int? familyId, int ?userId)
         {
-            var family = db.Families.FirstOrDefault(f => f.Id == familyId);
-            family.Users.Add(db.Users.FirstOrDefault(u=>u.Id==userId));
-            db.SaveChanges();
+            if (familyId != null && userId != null)
+            {
+                var family = db.Families.FirstOrDefault(f => f.Id == familyId);
+                family.Users.Add(db.Users.FirstOrDefault(u => u.Id == userId));
+                db.SaveChanges();
+            }
         }
     }
 }

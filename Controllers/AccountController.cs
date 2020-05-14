@@ -220,34 +220,6 @@ namespace CConstsProject.Controllers
             }
         }
         
-        [HttpPatch("leave-family")]
-        public async Task LeaveFamily()
-        {
-            
-            var user = Worker.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == HttpContext.User.Identity.Name);
-            if (user.Family == null)
-            {
-                Response.StatusCode = 403;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
-                return;
-            }
-
-            var family = user.FamilyId;
-            user.FamilyId = null;
-            
-            Worker.EditEntity(user);
-            
-            if (((Family) FamilyWork.GetEntity(family)).Users.Count == 0)
-            {
-                FamilyWork.DeleteEntity(FamilyWork.GetEntity(family));
-            }
-            Response.StatusCode = 200;
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
-            
-            
-
-        }
+        
     }
 }

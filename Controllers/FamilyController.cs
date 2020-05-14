@@ -15,20 +15,22 @@ namespace CCostsProject.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/family")]
-    public class FamilyController:Controller
+    public class FamilyController : Controller
     {
-        
+
         private ApplicationContext db;
         private IWorker _worker;
         private IWorker UserWork;
+        private IWorker InviteWorker;
 
         public FamilyController(ApplicationContext context)
         {
             db = context;
             _worker = new FamilyWorker(db);
-            UserWork=new UserWorker(db);
+            UserWork = new UserWorker(db);
+            InviteWorker = new InviteWorker(db);
         }
-        
+
         ///<summary>Add a family</summary>
         /// <remarks>need "Authorization: Bearer jwt token" in the  header of request
         /// After adding , the current user will be owner of family  </remarks>
@@ -42,83 +44,294 @@ namespace CCostsProject.Controllers
         {
             try
             {
-                
+
 
                 var creator = UserWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == Response.HttpContext.User.Identity.Name);
                 family.Users.Add(creator);
-                
-                
+                family.createdAt = DateTime.Now;
+
+
                 _worker.AddEntity(family);
 
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson( 
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(
                     _worker.GetEntities().LastOrDefault()));
 
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
-                Response.StatusCode = ex is FamilyAlreadyExistException?403:400;
+                Response.StatusCode = ex is FamilyAlreadyExistException ? 403 : 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,ex is FamilyAlreadyExistException?new List<object>{"Name"}:null,
-                    ex is FamilyAlreadyExistException ? new List<string> { "family name is not unique" } : null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
+                    ex is FamilyAlreadyExistException ? new List<object> {"Name"} : null,
+                    ex is FamilyAlreadyExistException ? new List<string> {"family name is not unique"} : null));
             }
 
         }
-        
-        ///<summary> Get a family or families that current user owns</summary>
+
+        ///<summary> Get a family  that current user owns</summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
-        ///<response code="200">Return all families that was created by current user</response>
+        ///<response code="200">Returns a family this user is in </response>
         /// <response code="400">If the request date in incorrect</response>
         ///<response code="401">If the user has not authorized</response>
+        [ProducesResponseType(typeof(JsonStructureExample<FamilyJson>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
         [HttpGet]
         [Produces("application/json")]
         public async Task Get()
         {
             try
             {
-               
-                    Response.StatusCode = 200;
-                    Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson( 
-                        _worker.GetEntities().Cast<Family>()
-                            .Where(f => f.Users.Exists(u=>u.UserName == HttpContext.User.Identity.Name)).ToList<object>()));
+
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(
+                    _worker.GetEntities().Cast<Family>()
+                        .Where(f => f.Users.Exists(u => u.UserName == HttpContext.User.Identity.Name)).ToList().Select(
+                            o => new
+                            {
+                                Id = o.Id, Creator = o.Users.First()?.UserName, CreatedAt = o.createdAt, members =
+                                    o.Users.Select(
+                                        u => new
+                                        {
+                                            Id = u.Id,
+                                            role = u.UserName == o.Users.First()?.UserName ? "Owner" : "Member",
+                                            Nickname = u.UserName, u.FirstName, u.SecondName, u.Email
+                                        })
+                            }).ToList<object>()));
             }
             catch
             {
                 Response.StatusCode = 400;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
             }
 
         }
-        
-        ///<summary> Add a user to a family</summary>
+
+        /// <summary>Add an invite to a family </summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
-        ///<response code="200">if the user was added to a family </response>
-        /// <response code="400">If the request data in incorrect</response>
-        ///<response code="401">If the user has not authorized</response>
-        /// <response code="403">If current user doesn`t own this family or the user witch may be added is already exist </response>
-        [HttpPost("add-user")]
-        [Produces("application/json")]
-        public async Task AddUser([FromBody] AddUserToFamilyViewModel familyUserView)
+        ///<response code="200">Returns an invite that was added </response>
+        /// <response code="400">If the request date in incorrect</response>
+        ///<response code="403">If the user has not a family or if he is not an owner </response>
+        ///<response code="404">If the user with current username not found </response>
+        
+
+
+        [ProducesResponseType(typeof(JsonStructureExample<Invite>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 403)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 404)]
+        
+        [HttpPost("invite")]
+        public async Task AddInvite([FromHeader] string userName)
         {
             try
             {
-                /*if (familyUserView== null)
-                {
-                    Response.StatusCode = 400;
-                    Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson("", "Bad request", "Error", null));
-                    return;
-                }*/
 
-                
-                if (!((Family)_worker.GetEntity(familyUserView.familyId)).Users.Contains(UserWork.GetEntity(familyUserView.userId))&&((Family)_worker.GetEntity(familyUserView.familyId)).Users.First().Id==
-                    UserWork.GetEntities().Cast<User>().FirstOrDefault(u=>u.UserName==HttpContext.User.Identity.Name).Id)
+                var user = UserWork.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == userName);
+                var currentUser = UserWork.GetEntities().Cast<User>()
+                    .FirstOrDefault(u => u.UserName == User.Identity.Name);
+                if (user != null)
                 {
-                    ((FamilyWorker) _worker).AddUser(familyUserView.familyId, familyUserView.userId);
+                    if (currentUser.Family != null)
+                    {
+                        if (currentUser?.Family.Users.FirstOrDefault()?.UserName == User.Identity.Name)
+                        {
+                            InviteWorker.AddEntity(new Invite
+                                {Date = DateTime.Now, FamilyId = (int) currentUser.FamilyId, UserName = userName});
+                            Response.StatusCode = 200;
+                            Response.ContentType = "application/json";
+                            await Response.WriteAsync(
+                                JsonResponseFactory.CreateJson(InviteWorker.GetEntities().LastOrDefault()));
+                            return;
+                        }
+
+                        Response.StatusCode = 403;
+                        Response.ContentType = "application/json";
+                        await Response.WriteAsync(JsonResponseFactory.CreateJson(null,
+                            new List<object> {""}, new List<string> {"Current user is not owner of current family"}));
+                        return;
+                    }
+
+                    Response.StatusCode = 403;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null, new List<object> {""},
+                        new List<string> {"Current user is not in family now"}));
+                    return;
+                }
+
+                Response.StatusCode = 404;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null, new List<object> {"username"},
+                    new List<string> {"User with current username not found"}));
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+            }
+        }
+
+
+        ///<summary>Gets all invitation of current user </summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="200">Returns all invitations of current user </response>
+        ///<response code="400">If the request date in incorrect</response>
+
+        [ProducesResponseType(typeof(JsonStructureExample<List<Invite>>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
+
+        [HttpGet("invitations")]
+        public async Task GetInvitations()
+        {
+            try
+            {
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(InviteWorker.GetEntities().Cast<Invite>()
+                    .Where(i => i.UserName == User.Identity.Name)));
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+            }
+        }
+
+        ///<summary>Accept the invite </summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="200">If the user was added to a family </response>
+        ///<response code="400">If the request date in incorrect</response>        
+        ///<response code="404">If the invite with current id was not found</response>
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 404)]
+
+
+        [HttpPost("invitations/accept")]
+        public async Task AcceptInvite([FromHeader] int id)
+        {
+            try
+            {
+                var invite = InviteWorker.GetEntities().Cast<Invite>()
+                    .FirstOrDefault(i => i.UserName == User.Identity.Name && i.Id == id);
+                if (invite != null)
+                {
+                    ((FamilyWorker) _worker).AddUser(invite.FamilyId,
+                        UserWork.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id);
+                    InviteWorker.DeleteEntity(invite);
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+                    return;
+                }
+
+                Response.StatusCode = 404;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null, new List<object> {""},
+                    new List<string> {"The invite with current id was not found"}));
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+            }
+        }
+
+        ///<summary>Leave the family </summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="200">If the user was successfully deleted from family</response>
+        ///<response code="400">If the request date in incorrect</response>        
+
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
+
+        [HttpDelete("leave")]
+        public async Task LeaveFamily()
+        {
+            try
+            {
+                var user = UserWork.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == User.Identity.Name);
+                user.Family = null;
+                UserWork.EditEntity(user);
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+            }
+        }
+
+        ///<summary>Cancel the invite</summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="200">If the invite was deleted </response>
+        ///<response code="400">If the request date in incorrect</response>        
+        ///<response code="404">If the invite with current id was not found</response>
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 404)]
+        [HttpDelete("invitations/cancel")]
+        public async Task CancelInvite([FromHeader] int id)
+        {
+            try
+            {
+
+                var invite = InviteWorker.GetEntities().Cast<Invite>()
+                    .FirstOrDefault(i => i.UserName == User.Identity.Name && i.Id == id);
+                if (invite != null)
+                {
+
+                    InviteWorker.DeleteEntity(invite);
+                    Response.StatusCode = 200;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+                    return;
+                }
+
+                Response.StatusCode = 404;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null, new List<object> {""},
+                    new List<string> {"The invite with current id was not found"}));
+            }
+            catch
+            {
+
+                Response.StatusCode = 400;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+            }
+        }
+
+        /// <summary>Kick a user </summary>
+        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
+        ///<response code="200">If the user was successfully kicked</response>
+        ///<response code="403">If the user has not permissions to perform this operation</response>
+        ///<response code="400">If the request date in incorrect</response>
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 200)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 400)]
+        [ProducesResponseType(typeof(JsonStructureExample<object>), 403)]
+        
+        [HttpDelete("kick")]
+        public async Task KickUser([FromHeader] int id)
+        {
+            try
+            {
+                var user = UserWork.GetEntities().Cast<User>().FirstOrDefault(u => u.UserName == User.Identity.Name);
+                if (user.Family != null&&user.Family.Users.FirstOrDefault()?.UserName==User.Identity.Name)
+                {
+                    var family = user.Family;
+                    family.Users.Remove((User) UserWork.GetEntity(id));
                     Response.StatusCode = 200;
                     Response.ContentType = "application/json";
                     await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
@@ -127,54 +340,9 @@ namespace CCostsProject.Controllers
 
                 Response.StatusCode = 403;
                 Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
-            }
-            catch
-            {
-                Response.StatusCode = 400;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
-                
-            }
-        }
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(null,new List<object>{""},new List<string>{"The user has not permissions to perform this operation"}));
 
-        ///<summary> Get family users</summary>
-        ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
-        ///<response code="200">Returns all users that relate to appropriate family  </response>
-        /// <response code="400">If the request date in incorrect</response>
-        ///<response code="401">If the user has not authorized</response>
-        /// <response code="403">If the user is not a member of the family</response>
-        /// <response code="404">If family with that id was not not found</response>
-        [HttpGet("get-users")]
-        [Produces("application/json")]
-        public async Task GetUsers([FromHeader] string FamilyId)
-        {
-            try
-            {
-                
 
-                var family = _worker.GetEntity(int.Parse(FamilyId));
-                if (family == null)
-                {
-                    Response.StatusCode = 404;
-                    Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson( null)); 
-                    return;
-                }
-
-                var users = ((Family) family).Users;
-                if (!users.Contains(UserWork.GetEntities().Cast<User>()
-                    .FirstOrDefault(u => u.UserName == HttpContext.User.Identity.Name)))
-                {
-                    Response.StatusCode = 403;
-                    Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null)); 
-                    return;
-                }
-                Response.StatusCode = 200;
-                Response.ContentType = "application/json";
-                await Response.WriteAsync(JsonResponseFactory.CreateJson(  users.Cast<ITable>().ToList())); 
-                
             }
             catch
             {
@@ -184,6 +352,8 @@ namespace CCostsProject.Controllers
             }
         }
 
+
+        
         /// <summary>
         /// Delete family
         /// </summary>
