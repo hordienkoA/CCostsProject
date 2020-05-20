@@ -101,7 +101,7 @@ namespace CCostsProject.Controllers
                                         {
                                             Id = u.Id,
                                             role = u.UserName == o.Users.First()?.UserName ? "Owner" : "Member",
-                                            Nickname = u.UserName, u.FirstName, u.SecondName, u.Email,Money=u.Transactions.Where(t=>t.Type==TransactionType.Family).Sum(t=>t.Money)
+                                            Nickname = u.UserName, u.FirstName, u.SecondName, u.Email,Money=u.Transactions.Where(t=>t.Type.ToString()==TransactionType.Family.ToString()).Sum(t=>t.Money)
                                         })
                             }).ToList<object>()));
             }
@@ -370,11 +370,11 @@ namespace CCostsProject.Controllers
         /// 
         /// <returns>teafd{t:3}</returns>
         [HttpDelete]
-        public async Task DeleteFamily([FromHeader] string FamilyId)
+        public async Task DeleteFamily()
         {
             try
             {
-                var family = _worker.GetEntity(int.Parse(FamilyId));
+                var family = UserWork.GetEntities().Cast<User>().First(u=>u.UserName==User.Identity.Name).Family;
                 if (family == null)
                 {
                     Response.StatusCode = 404;

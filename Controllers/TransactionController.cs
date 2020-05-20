@@ -19,6 +19,7 @@ namespace CCostsProject.Controllers
         private readonly IWorker transactionWork;
         private readonly IWorker userWork;
         private readonly IWorker itemWork;
+        private readonly IWorker currencyWork;
 
         public TransactionController(ApplicationContext context)
         {
@@ -26,6 +27,7 @@ namespace CCostsProject.Controllers
             transactionWork = new TransactionWorker(db);
             userWork = new UserWorker(db);
             itemWork=new ItemWorker(db);
+            currencyWork = new CurrencyWorker(db);
         }
 
         ///<summary>Get an income or  incomes </summary>
@@ -143,9 +145,17 @@ namespace CCostsProject.Controllers
                 }
                 transaction.User = userWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == User.Identity.Name);
-                transaction.User.CashSum += transaction.Money;
                 transaction.CurrencyId=(transaction.CurrencyId==0||transaction.CurrencyId==null)?transaction.User.CurrencyId:transaction
                     .CurrencyId;
+                if (transaction.User.CurrencyId != transaction.CurrencyId)
+                {
+                    var userCurrency = userWork.GetEntities().Cast<User>().First(u => u.UserName == User.Identity.Name).Currency;
+                    var currentCurrency = (Currency)currencyWork.GetEntity(transaction.CurrencyId);
+                    transaction.Money = transaction.Money * currentCurrency.rate / userCurrency.rate;
+                    transaction.CurrencyId = userCurrency.Id;
+                }
+                transaction.User.CashSum += transaction.Money;
+                
                 transactionWork.AddEntity(transaction);
                 
                 Response.ContentType = "application/json";

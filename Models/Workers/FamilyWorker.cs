@@ -15,12 +15,12 @@ namespace CCostsProject.Models
         }
         public ITable GetEntity(int? id)
         {
-            return id==null? db.Families.Include(f=>f.Users).FirstOrDefault():db.Families.Include(f=>f.Users).FirstOrDefault(f => f.Id == id);
+            return id==null? db.Families.Include(f=>f.Users).FirstOrDefault():db.Families.Include(f=>f.Users).ThenInclude(u=>u.Transactions).FirstOrDefault(f => f.Id == id);
         }
 
         public List<ITable> GetEntities()
         {
-            return db.Families.Include(f=>f.Users).ToList<ITable>();
+            return db.Families.Include(f=>f.Users).ThenInclude(u=>u.Transactions).ToList<ITable>();
         }
 
         public void AddEntity(ITable entity)
