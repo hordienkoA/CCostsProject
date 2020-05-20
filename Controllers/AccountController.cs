@@ -160,56 +160,36 @@ namespace CConstsProject.Controllers
 
 
         /// <summary>
-        /// Get a user by id or users 
+        /// Get a current user  
         /// </summary>
         ///<remarks>need "Authorization: Bearer jwt token" in the  header of request</remarks>
         ///<response code="200">Returns the user </response>
-        ///<response code="403">if auth username!=Admin</response>
         ///<response code="401">if the user has not authorized</response>
-        ///<response code="404">if user with that id not found </response>
         
         [HttpGet]
-        public async Task Get([FromHeader] string id)
+        public async Task Get()
         {
             try
             {
-
-                
-                    if (Int32.TryParse(id,out var integerId))
-                    {
-                        User user = (User)Worker.GetEntity(integerId);
-                        if (user != null)
+                var user = Worker.GetEntities().Cast<User>()
+                        .Select(o=>new
                         {
-                            Response.StatusCode = 200;
-                            Response.ContentType = "application/json";
-                            await Response.WriteAsync(JsonResponseFactory.CreateJson(new {Id=user.Id,UserName=user.UserName}));
-                            return;
-
-                        }
-                        Response.StatusCode = 404;
-                        Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
-                       
-
-                    }
-
-               
-                    else if(id==null)
-                    {
-                        Response.StatusCode = 200;
-                        Response.ContentType = "application/json";
-                        await Response.WriteAsync(JsonResponseFactory.CreateJson(db.Users.Select(u=>new {Id=u.Id,UserName=u.UserName}).ToList<object>()));
-                        return;
-                       
-                    }
-                
-                else
-                {
-                    Response.StatusCode = 403;
-                    Response.ContentType = "application/json";
-                    await Response.WriteAsync(JsonResponseFactory.CreateJson( null));
-                    return;
-                }
+                            o.Id,
+                            o.FirstName,
+                            o.SecondName,
+                            o.Email,
+                            o.UserName,
+                            o.Money,
+                            o.CurrencyId,
+                            o.FamilyId,
+                            
+                            
+                        }).First(u => u.UserName == User.Identity.Name)
+                    ;
+                Response.StatusCode = 200;
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonResponseFactory.CreateJson(user));
+                 
             }
             catch
             {
@@ -220,6 +200,8 @@ namespace CConstsProject.Controllers
             }
         }
         
+    }
+        
         
     }
-}
+

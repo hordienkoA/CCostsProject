@@ -154,7 +154,7 @@ namespace CCostsProject.Controllers
                     transaction.Money = transaction.Money * currentCurrency.rate / userCurrency.rate;
                     transaction.CurrencyId = userCurrency.Id;
                 }
-                transaction.User.CashSum += transaction.Money;
+                transaction.User.Money += transaction.Money;
                 
                 transactionWork.AddEntity(transaction);
                 

@@ -32,7 +32,7 @@ namespace CConstsProject.Models
         [JsonIgnore]
         public string Salt { get; set; }
         
-        public double CashSum { get; set; } 
+        public double Money { get; set; } 
         [JsonIgnore]
         public int? FamilyId { get; set; }
         [JsonIgnore]

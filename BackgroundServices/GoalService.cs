@@ -33,11 +33,11 @@ namespace CCostsProject.BackgroundServices
             foreach (var g in goals.Where(g => g.Status == "Active")) 
             {
                 
-                if (g.User.CashSum < g.Money && g.DateFinish < DateTime.Now)
+                if (g.User.Money < g.Money && g.DateFinish < DateTime.Now)
                 {
                     ((PlanWorker) goalWorker).ChangeStatus("Failed", g.Id);
                     _logger.LogInformation($"Goal {g.Id} failed");
-                }else if (g.User.CashSum >= g.Money && g.DateFinish < DateTime.Now)
+                }else if (g.User.Money >= g.Money && g.DateFinish < DateTime.Now)
                 {
                     ((PlanWorker) goalWorker).ChangeStatus("Success", g.Id);
                     _logger.LogInformation($"Goal {g.Id} succeed");
