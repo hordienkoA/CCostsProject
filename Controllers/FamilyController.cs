@@ -84,12 +84,20 @@ namespace CCostsProject.Controllers
         {
             try
             {
-
+                var currentUser = UserWork.GetEntities().Cast<User>().First(u => u.UserName == User.Identity.Name);
+                if (currentUser.Family == null)
+                {
+                    Response.StatusCode = 404;
+                    Response.ContentType = "application/json";
+                    await Response.WriteAsync(JsonResponseFactory.CreateJson(null));
+                    return;
+                }
+              
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson(
                     _worker.GetEntities().Cast<Family>()
-                        .Where(f => f.Users.Exists(u => u.UserName == HttpContext.User.Identity.Name)).ToList().Select(
+                        .Where(f => f.Users.Exists(u => u.UserName == HttpContext.User.Identity.Name)).Select(
                             o => new
                             {
                                 Id = o.Id,
@@ -103,7 +111,7 @@ namespace CCostsProject.Controllers
                                             role = u.UserName == o.Users.First()?.UserName ? "Owner" : "Member",
                                             Nickname = u.UserName, u.FirstName, u.SecondName, u.Email,Money=u.Transactions.Where(t=>t.Type.ToString()==TransactionType.Family.ToString()).Sum(t=>t.Money)
                                         })
-                            }).ToList<object>()));
+                            }).First()));
             }
             catch
             {
