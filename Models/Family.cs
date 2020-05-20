@@ -15,7 +15,7 @@ namespace CConstsProject.Models
         public string Name{ get; set; }
         public string AdditionalInfo { get; set; }
         [JsonIgnore]
-        public DateTime createdAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         
         [JsonIgnore]
         public List<User> Users { get; set; }

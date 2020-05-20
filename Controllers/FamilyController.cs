@@ -49,7 +49,7 @@ namespace CCostsProject.Controllers
                 var creator = UserWork.GetEntities().Cast<User>()
                     .FirstOrDefault(u => u.UserName == Response.HttpContext.User.Identity.Name);
                 family.Users.Add(creator);
-                family.createdAt = DateTime.Now;
+                family.CreatedAt = DateTime.Now;
 
 
                 _worker.AddEntity(family);
@@ -92,13 +92,16 @@ namespace CCostsProject.Controllers
                         .Where(f => f.Users.Exists(u => u.UserName == HttpContext.User.Identity.Name)).ToList().Select(
                             o => new
                             {
-                                Id = o.Id, Creator = o.Users.First()?.UserName, CreatedAt = o.createdAt, members =
-                                    o.Users.Select(
+                                Id = o.Id,
+                                Name=o.Name,
+                                Creator = o.Users.First()?.UserName, 
+                                CreatedAt = o.CreatedAt,
+                                members = o.Users.Select(
                                         u => new
                                         {
                                             Id = u.Id,
                                             role = u.UserName == o.Users.First()?.UserName ? "Owner" : "Member",
-                                            Nickname = u.UserName, u.FirstName, u.SecondName, u.Email
+                                            Nickname = u.UserName, u.FirstName, u.SecondName, u.Email,Money=u.Transactions.Where(t=>t.Type==TransactionType.Family).Sum(t=>t.Money)
                                         })
                             }).ToList<object>()));
             }

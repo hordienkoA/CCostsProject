@@ -61,7 +61,18 @@ namespace CCostsProject.Controllers
 
                     await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                          
-                        Response.StatusCode==200 ?transaction:null));
+                        Response.StatusCode==200 ?new
+                        {
+                            transaction.Id,
+                            transaction.UserId,
+                            transaction.Money,
+                            transaction.Date,
+                            Type=transaction.Type.ToString(),
+                            transaction.Description,
+                            transaction.ItemId,
+                            WorkType=transaction.WorkType.ToString(),
+                            transaction.CurrencyId
+                        }:null));
                 }
                 else if (id == null)
                 {
@@ -71,7 +82,18 @@ namespace CCostsProject.Controllers
                     await Response.WriteAsync(JsonResponseFactory.CreateJson( 
                         transactionWork.GetEntities().Cast<Transaction>().Where(u =>
                                 (((fromDate==null?true:u.Date>=fromDate)&&(toDate==null?true:u.Date<=toDate))&&type!=null?type.Trim().Equals("Outgo",StringComparison.OrdinalIgnoreCase)?u.ItemId!=null&&u.WorkType==null:type.Trim().Equals("Income",StringComparison.OrdinalIgnoreCase)?u.WorkType!=null&&u.ItemId==null:true:true&&(u.User.UserName ==
-                                    User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false))))
+                                    User.Identity.Name ||(u.User.Family?.Users.Exists(usr=>usr.UserName==User.Identity.Name) ?? false)))).Select(t=>new
+                            {
+                                t.Id,
+                                t.UserId,
+                                t.Money,
+                                t.Date,
+                                Type=t.Type.ToString(),
+                                t.Description,
+                                t.ItemId,
+                                WorkType=t.WorkType.ToString(),
+                                t.CurrencyId
+                            })
                             .ToList<object>()));
                 }
             
