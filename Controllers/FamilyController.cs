@@ -204,7 +204,7 @@ namespace CCostsProject.Controllers
                 Response.StatusCode = 200;
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonResponseFactory.CreateJson(InviteWorker.GetEntities().Cast<Invite>()
-                    .Where(i => i.UserName == User.Identity.Name)));
+                    .Where(i => i.UserName == User.Identity.Name).ToList<object>()));
             }
             catch
             {
