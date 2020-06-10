@@ -23,13 +23,14 @@ namespace CCostsProject.Models
                 var salt = Salt.Create();
                 var Admin = new User
                 {
-                    UserName = "Admin", FirstName = "Johny ", SecondName = "Sins", Email = "baldfrombrazzers@pussy.com",
+                    UserName = "Admin", FirstName = "Andrii", SecondName = "Hordiienko", Email = "gord34326@gmail.com",
                     Password = Hash.Create("Admin"+_config.GetValue<string>("GlobalParameter"),salt),Salt = salt,Position = "Admin",CurrencyId = 1
                 };
                 
                 db.Users.AddRange(Admin);
                 
             }
+            db.SaveChangesAsync();
             /*if (!db.Currencies.Any())
             {
                 db.Currencies.Add(new Currency() { Name = "USD" });
@@ -43,7 +44,7 @@ namespace CCostsProject.Models
                 
             }*/
 
-            db.SaveChangesAsync();
+         
         }
     }
 }

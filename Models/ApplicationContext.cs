@@ -29,16 +29,11 @@ namespace CConstsProject.Models
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            /*modelBuilder.Entity<Outgo>().HasOne(o => o.User).WithMany(u => u.Outgoes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Income>().HasOne(i => i.User).WithMany(u => u.Incomes).HasForeignKey(o=>o.UserId).OnDelete(DeleteBehavior.Cascade);*/
             modelBuilder.Entity<User>().HasOne(u => u.Family).WithMany(f => f.Users).HasForeignKey(u=>u.FamilyId).OnDelete(DeleteBehavior.SetNull);
-            
-            /*
-            modelBuilder.Entity<Outgo>().HasOne(o => o.Item).WithMany(i => i.Outgos).HasForeignKey(o=>o.ItemId).OnDelete(DeleteBehavior.Cascade);
-            */
-            //modelBuilder.Entity<Currency>().HasMany(c => c.Users).WithOne(u => u.Currency).HasForeignKey(u => u.CurrencyId);
-            //modelBuilder.Entity<Currency>().HasMany(c => c.Incomes).WithOne(i => i.Currency).HasForeignKey(i => i.CurrencyId);
-            //modelBuilder.Entity<Currency>().HasMany(c => c.Outgoes).WithOne(o => o.Currency).HasForeignKey(o => o.CurrencyId);
+           // modelBuilder.Entity<Transaction>().Property(x => x.Money).HasColumnType("decimal(8,2");
+            //modelBuilder.Query<Item>().Property(x => x.AmountOfMoney).HasColumnType("decimal(8,2");
+            // modelBuilder.Query<User>().Property(x => x.Money).HasColumnType("decimal(8,2)");
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

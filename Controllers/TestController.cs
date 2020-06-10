@@ -1,4 +1,4 @@
-﻿
+﻿/*
 using CConstsProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,3 +30,4 @@ namespace CCostsProject.Controllers
     }
 }
 
+*/

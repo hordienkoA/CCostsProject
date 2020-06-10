@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CConstsProject.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -15,6 +16,7 @@ namespace CCostsProject.Models
         [JsonIgnore]
         public User User { get; set; }
         [Required]
+        [Column(TypeName = "decimal(8,2)")]
         public double Money { get; set; }
         [Required]
         [DisplayFormat(DataFormatString = "{0:yyyy'-'MMMM-dd'T'HH:mm:ss'Z'}",ApplyFormatInEditMode = true)]

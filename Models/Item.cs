@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using CCostsProject.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CConstsProject.Models
 {
@@ -22,6 +23,7 @@ namespace CConstsProject.Models
         public int? CurrencyId { get; set; }
         [JsonIgnore]
         public Currency Currency { get; set; }
+        [Column(TypeName = "decimal(8,2)")]
         public double AmountOfMoney { get; set; }
         
         [JsonIgnore]
