@@ -30,7 +30,7 @@ namespace CCostsProject.Models
                 db.Users.AddRange(Admin);
                 
             }
-            db.SaveChangesAsync();
+            db.SaveChanges();
             /*if (!db.Currencies.Any())
             {
                 db.Currencies.Add(new Currency() { Name = "USD" });

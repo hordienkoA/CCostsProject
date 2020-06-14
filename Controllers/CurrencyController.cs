@@ -19,11 +19,11 @@ namespace CCostsProject.Controllers
     {
         ApplicationContext db;
         IWorker Worker;
-        public CurrencyController(ApplicationContext context,IInitializer init)
+        public CurrencyController(ApplicationContext context)
         {
             db = context;
             Worker = new CurrencyWorker(db);
-            init.CheckAndInitialize();
+            //init.CheckAndInitialize();
         }
        
 

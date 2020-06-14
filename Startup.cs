@@ -95,15 +95,15 @@ namespace CConstsProject
             });
 
             
-            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton);
+            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
             services.AddHostedService<CurrencyService>();
-            services.AddHostedService<GoalService>();
-            services.AddScoped<IInitializer, Initializer>();
+            //services.AddHostedService<GoalService>();
+            services.AddTransient<IInitializer, Initializer>();
             services.AddMvc(opt =>
             {
                 opt.Filters.Add(typeof(ValidatorActionFilter));

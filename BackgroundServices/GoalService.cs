@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -14,11 +15,12 @@ namespace CCostsProject.BackgroundServices
         private readonly ILogger<CurrencyService> _logger;
         private Timer _timer;
         private IWorker goalWorker;
-
-        public GoalService(ILogger<CurrencyService> logger,ApplicationContext db)
+        private readonly IServiceScopeFactory serviceScope;
+        public GoalService(ILogger<CurrencyService> logger, IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
-            goalWorker=new PlanWorker(db);
+            serviceScope = scopeFactory;
+            //goalWorker=new PlanWorker(db);
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -29,6 +31,8 @@ namespace CCostsProject.BackgroundServices
 
         private void DoWork(object state)
         {
+            var scope = serviceScope.CreateScope();
+            goalWorker =new PlanWorker(scope.ServiceProvider.GetRequiredService<ApplicationContext>());
             var goals = goalWorker.GetEntities().Cast<Plan>();
             foreach (var g in goals.Where(g => g.Status == "Active")) 
             {

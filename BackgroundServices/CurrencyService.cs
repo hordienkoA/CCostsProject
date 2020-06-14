@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CConstsProject.Models;
 using CCostsProject.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,12 +17,13 @@ namespace CCostsProject.BackgroundServices
     {
         private readonly ILogger<CurrencyService> _logger;
         private Timer _timer;
-        private IWorker currencyWorker;
-        
-        public CurrencyService(ILogger<CurrencyService> logger,ApplicationContext db)
+
+        private readonly IServiceScopeFactory scopeFactory;
+        public CurrencyService(ILogger<CurrencyService> logger,IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
-            currencyWorker=new CurrencyWorker(db);
+            this.scopeFactory = scopeFactory;
+            
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -44,6 +46,10 @@ namespace CCostsProject.BackgroundServices
 
         private async void  DoWork(object state)
         {
+            var scope = scopeFactory.CreateScope();
+            IWorker currencyWorker = new CurrencyWorker(scope.ServiceProvider.GetRequiredService<ApplicationContext>());
+ 
+            
             HttpClient client=new HttpClient();
             HttpRequestMessage request=new HttpRequestMessage();
             request.RequestUri=new Uri($"https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");

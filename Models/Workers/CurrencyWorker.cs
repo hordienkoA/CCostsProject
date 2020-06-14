@@ -29,6 +29,7 @@ namespace CCostsProject.Models
             {
                 db.Currencies.Add((Currency)entity);
             }
+            db.SaveChanges();
         }
 
         public void EditEntity(ITable entity)
