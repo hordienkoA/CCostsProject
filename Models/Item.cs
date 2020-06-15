@@ -21,16 +21,21 @@ namespace CConstsProject.Models
         public int AmountOfOutgoes { get; set; }
        // [Required]
         public int? CurrencyId { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public Currency Currency { get; set; }
         [Column(TypeName = "decimal(8,2)")]
         public double AmountOfMoney { get; set; }
-        
+
+        [Obsolete]
         [JsonIgnore]
         public int? UserId { get; set; }
         [JsonIgnore]
+        [Obsolete]
+
         public User User { get; set; }
 
+        [Obsolete]
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }
         public Item()

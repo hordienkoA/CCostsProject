@@ -22,10 +22,12 @@ namespace CCostsProject.Models
         /*[Required]*/
         public string Status { get; set; }
         public int? UserId { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public User User { get; set; }
         
         public int? CurrencyId { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public Currency Currency { get; set; }
     }

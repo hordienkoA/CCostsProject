@@ -25,7 +25,7 @@ namespace CCostsProject.BackgroundServices
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Goal service is running");
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(20));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
             return Task.CompletedTask;
         }
 

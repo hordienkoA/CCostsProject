@@ -14,9 +14,11 @@ namespace CConstsProject.Models
         [Required]
         public string Name{ get; set; }
         public string AdditionalInfo { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public DateTime CreatedAt { get; set; }
-        
+
+        [Obsolete]
         [JsonIgnore]
         public List<User> Users { get; set; }
         public Family()

@@ -22,27 +22,36 @@ namespace CConstsProject.Models
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string SecondName { get; set; }
-        [JsonIgnore]
-        public string Position { get; set; } 
+        [Obsolete]
+        public string Position { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public string Salt { get; set; }
         [Column(TypeName ="decimal(8,2)")]
-        public double Money { get; set; } 
+        public double Money { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public int? FamilyId { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public Family Family { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public List<Item> Items { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public List<Plan> Goals { get; set; }
         public int? CurrencyId { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public Currency Currency { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public int? FieldInfoId { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public FileInfo  Avatar { get; set; }
         

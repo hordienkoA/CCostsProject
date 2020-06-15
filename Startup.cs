@@ -61,6 +61,7 @@ namespace CConstsProject
                 });
             services.AddSwaggerGen(c =>
             {
+                c.IgnoreObsoleteProperties();
                 c.DescribeAllEnumsAsStrings();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CC API", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -102,7 +103,7 @@ namespace CConstsProject
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
             services.AddHostedService<CurrencyService>();
-            //services.AddHostedService<GoalService>();
+            services.AddHostedService<GoalService>();
             services.AddTransient<IInitializer, Initializer>();
             services.AddMvc(opt =>
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CConstsProject.Models;
@@ -89,7 +90,7 @@ namespace CCostsProject.Controllers
 
                 await Response.WriteAsync(JsonResponseFactory.CreateJson(goalWorker.GetEntities().LastOrDefault()));
             }
-            catch
+            catch(Exception ex)
             {
                 Response.ContentType = "application/json";
                 Response.StatusCode = 400;

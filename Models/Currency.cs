@@ -25,11 +25,14 @@ namespace CCostsProject.Models
         [Required]
 
         public string exchangedate { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public List<User> Users { get; set; }
+        [Obsolete]
         [JsonIgnore]
         public List<Transaction> Transactions { get; set; }
-        
+
+        [Obsolete]
         [JsonIgnore]
         public List<Plan> Plans { get; set; }
 
