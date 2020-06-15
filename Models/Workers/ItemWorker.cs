@@ -16,7 +16,7 @@ namespace CCostsProject.Models
         public ITable GetEntity(int? id)
         {
             return id == null ? db.Items
-                .Include(i => i.Transactions).FirstOrDefault() 
+                .Include(i => i.Transactions).Include(i => i.User).FirstOrDefault() 
                 : db.Items
                     .Include(i => i.Transactions)
                     .FirstOrDefault(i => i.Id == id);
@@ -24,7 +24,7 @@ namespace CCostsProject.Models
 
         public List<ITable> GetEntities()
         {
-            return db.Items.Include(i => i.Transactions).ToList<ITable>();
+            return db.Items.Include(i => i.Transactions).Include(i=>i.User).ToList<ITable>();
         }
 
         public void AddEntity(ITable entity)

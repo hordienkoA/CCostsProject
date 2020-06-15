@@ -154,7 +154,10 @@ namespace CCostsProject.Controllers
                     transaction.Money = transaction.Money * currentCurrency.rate / userCurrency.rate;
                     transaction.CurrencyId = userCurrency.Id;
                 }
-                transaction.User.Money += transaction.Money;
+                if (transaction.ItemId != null) 
+                    transaction.User.Money -= Math.Abs(transaction.Money);
+                else
+                    transaction.User.Money+=Math.Abs(transaction.Money);
                 
                 transactionWork.AddEntity(transaction);
                 
